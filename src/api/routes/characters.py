@@ -59,7 +59,7 @@ async def list_characters(
     description="Get a character by ID.",
 )
 async def get_character(
-    character_id: str,
+    character_id: int,
     db: AsyncSession = Depends(get_db),
 ) -> CharacterResponse:
     """Get a character by ID."""
@@ -100,7 +100,7 @@ async def create_character(
     description="Update an existing character.",
 )
 async def update_character(
-    character_id: str,
+    character_id: int,
     data: CharacterUpdate,
     db: AsyncSession = Depends(get_db),
 ) -> CharacterResponse:
@@ -125,7 +125,7 @@ async def update_character(
     description="Delete a character by ID.",
 )
 async def delete_character(
-    character_id: str,
+    character_id: int,
     db: AsyncSession = Depends(get_db),
 ) -> None:
     """Delete a character."""
@@ -147,7 +147,7 @@ async def delete_character(
     description="Add experience points to a character.",
 )
 async def add_xp(
-    character_id: str,
+    character_id: int,
     amount: int = Query(..., gt=0, description="Amount of XP to add"),
     reason: str = Query(..., description="Reason for XP award"),
     db: AsyncSession = Depends(get_db),
@@ -173,7 +173,7 @@ async def add_xp(
     description="Spend experience points for a character.",
 )
 async def spend_xp(
-    character_id: str,
+    character_id: int,
     amount: int = Query(..., gt=0, description="Amount of XP to spend"),
     reason: str = Query(..., description="Reason for XP spend"),
     db: AsyncSession = Depends(get_db),

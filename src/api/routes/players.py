@@ -45,7 +45,7 @@ async def list_players(
     description="Get a player by ID.",
 )
 async def get_player(
-    player_id: str,
+    player_id: int,
     db: AsyncSession = Depends(get_db),
 ) -> PlayerResponse:
     """Get a player by ID."""
@@ -91,7 +91,7 @@ async def create_player(
     description="Update an existing player.",
 )
 async def update_player(
-    player_id: str,
+    player_id: int,
     data: PlayerUpdate,
     db: AsyncSession = Depends(get_db),
 ) -> PlayerResponse:
@@ -116,7 +116,7 @@ async def update_player(
     description="Delete a player by ID.",
 )
 async def delete_player(
-    player_id: str,
+    player_id: int,
     db: AsyncSession = Depends(get_db),
 ) -> None:
     """Delete a player."""
@@ -138,7 +138,7 @@ async def delete_player(
     description="Add player points (PP) to a player.",
 )
 async def add_pp(
-    player_id: str,
+    player_id: int,
     amount: int = Query(..., gt=0, description="Amount of PP to add"),
     db: AsyncSession = Depends(get_db),
 ) -> PlayerResponse:

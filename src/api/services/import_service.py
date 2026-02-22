@@ -6,8 +6,8 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.models import (
-    Player, Character, Trait, ExperienceHistory,
-    Action, Plot, Rumor, Item, Location
+    Player, Character, Trait,
+    Action, Plot, Rumor,
 )
 from src.legacy import GV3Parser
 

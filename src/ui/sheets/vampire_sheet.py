@@ -7,6 +7,7 @@ the Mind's Eye Theater LARP adjective-based trait system.
 
 from typing import Optional, List, Dict, Any
 from pathlib import Path
+from datetime import datetime
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
     QLabel, QLineEdit, QSpinBox, QGroupBox,
@@ -447,11 +448,15 @@ class VampireSheet(QWidget):
         """Save the current character."""
         if not self.character_id:
             return
-            
+
+        from src.core.engine import get_session
+        from src.core.models import Vampire
+
+        session = None
         try:
-            # Load character
-            character = load_character(self.character_id)
-            
+            session = get_session()
+            character = session.query(Vampire).filter(Vampire.id == self.character_id).first()
+
             if not character:
                 QMessageBox.critical(
                     self,
@@ -459,49 +464,44 @@ class VampireSheet(QWidget):
                     f"Failed to load character {self.character_id}"
                 )
                 return
-                
+
             # Update basic info
             character.name = self.name_edit.text()
             character.player_name = self.player_edit.text()
-            # TODO: Update chronicle
-            
-            if hasattr(character, "clan"):
-                character.clan = self.clan_combo.currentText()
-                
-            if hasattr(character, "generation"):
-                character.generation = self.generation_spin.value()
-                
-            if hasattr(character, "nature"):
-                character.nature = self.nature_combo.currentText()
-                
-            if hasattr(character, "demeanor"):
-                character.demeanor = self.demeanor_combo.currentText()
-                
+
+            character.clan = self.clan_combo.currentText()
+            character.generation = self.generation_spin.value()
+            character.nature = self.nature_combo.currentText()
+            character.demeanor = self.demeanor_combo.currentText()
+
             # Update notes
             if hasattr(character, "notes"):
                 character.notes = self.notes_edit.toPlainText()
-                
-            # Update traits
-            # TODO: Implement trait saving
-            
-            # Save character
-            character.save()
-            
+
+            character.last_modified = datetime.now()
+
+            session.commit()
+
             # Emit change signal
             self.character_changed.emit()
-            
+
             QMessageBox.information(
                 self,
                 "Save Success",
                 "Character saved successfully."
             )
-            
+
         except Exception as e:
+            if session:
+                session.rollback()
             QMessageBox.critical(
                 self,
                 "Save Error",
                 f"Error saving character: {str(e)}"
             )
+        finally:
+            if session:
+                session.close()
         
     def get_character_data(self) -> Dict:
         """Get the character data from the sheet.

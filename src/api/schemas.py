@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # ============== Base Schemas ==============
@@ -15,9 +15,9 @@ class BaseSchema(BaseModel):
 
 class IDSchema(BaseSchema):
     """Schema with ID field."""
-    id: str
-    created_at: datetime
-    updated_at: datetime
+    id: int
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 # ============== Player Schemas ==============
@@ -73,6 +73,14 @@ class TraitBase(BaseSchema):
     display_type: str = Field(default="simple", max_length=50)
     sort_order: int = Field(default=0)
 
+    @field_validator("value", mode="before")
+    @classmethod
+    def coerce_value_to_str(cls, v: Any) -> Optional[str]:
+        """Accept int or other types for value and coerce to str."""
+        if v is None:
+            return v
+        return str(v)
+
 
 class TraitCreate(TraitBase):
     """Schema for creating a trait."""
@@ -91,7 +99,7 @@ class TraitUpdate(BaseSchema):
 
 class TraitResponse(TraitBase, IDSchema):
     """Schema for trait response."""
-    character_id: str
+    character_id: Optional[int] = None
 
 
 # ============== Experience History Schemas ==============
@@ -113,7 +121,7 @@ class ExperienceHistoryCreate(ExperienceHistoryBase):
 
 class ExperienceHistoryResponse(ExperienceHistoryBase, IDSchema):
     """Schema for experience history response."""
-    character_id: str
+    character_id: Optional[int] = None
 
 
 # ============== Character Schemas ==============
@@ -134,7 +142,7 @@ class CharacterBase(BaseSchema):
 
 class CharacterCreate(CharacterBase):
     """Schema for creating a character."""
-    player_id: Optional[str] = None
+    player_id: Optional[int] = None
     traits: list[TraitCreate] = Field(default_factory=list)
 
 
@@ -142,7 +150,7 @@ class CharacterUpdate(BaseSchema):
     """Schema for updating a character."""
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     race_type: Optional[str] = Field(None, max_length=50)
-    player_id: Optional[str] = None
+    player_id: Optional[int] = None
     is_npc: Optional[bool] = None
     status: Optional[str] = Field(None, max_length=50)
     xp_unspent: Optional[int] = Field(None, ge=0)
@@ -155,7 +163,7 @@ class CharacterUpdate(BaseSchema):
 
 class CharacterResponse(CharacterBase, IDSchema):
     """Schema for character response."""
-    player_id: Optional[str] = None
+    player_id: Optional[int] = None
     player_name: Optional[str] = None
     traits: list[TraitResponse] = Field(default_factory=list)
     xp_history: list[ExperienceHistoryResponse] = Field(default_factory=list)
@@ -170,7 +178,7 @@ class CharacterListResponse(BaseSchema):
 class CharacterFilter(BaseSchema):
     """Schema for character filtering."""
     race_type: Optional[str] = None
-    player_id: Optional[str] = None
+    player_id: Optional[int] = None
     is_npc: Optional[bool] = None
     status: Optional[str] = None
 
@@ -295,7 +303,7 @@ class ActionBase(BaseSchema):
 
 class ActionCreate(ActionBase):
     """Schema for creating an action."""
-    character_id: str
+    character_id: Optional[int] = None
 
 
 class ActionUpdate(BaseSchema):
@@ -312,7 +320,7 @@ class ActionUpdate(BaseSchema):
 
 class ActionResponse(ActionBase, IDSchema):
     """Schema for action response."""
-    character_id: str
+    character_id: Optional[int] = None
     character_name: Optional[str] = None
 
 
@@ -363,7 +371,7 @@ class RumorBase(BaseSchema):
     level: int = Field(default=1, ge=1)
     category: Optional[str] = Field(None, max_length=50)
     rumor_date: str = Field(..., max_length=10)  # ISO date
-    target_character_id: Optional[str] = None
+    target_character_id: Optional[int] = None
     target_race: Optional[str] = Field(None, max_length=50)
     target_group: Optional[str] = Field(None, max_length=100)
     target_influence: Optional[str] = Field(None, max_length=100)
@@ -381,7 +389,7 @@ class RumorUpdate(BaseSchema):
     level: Optional[int] = Field(None, ge=1)
     category: Optional[str] = Field(None, max_length=50)
     rumor_date: Optional[str] = Field(None, max_length=10)
-    target_character_id: Optional[str] = None
+    target_character_id: Optional[int] = None
     target_race: Optional[str] = Field(None, max_length=50)
     target_group: Optional[str] = Field(None, max_length=100)
     target_influence: Optional[str] = Field(None, max_length=100)
@@ -441,12 +449,12 @@ class GameListResponse(BaseSchema):
 
 class BoonBase(BaseSchema):
     """Base boon schema."""
-    holder_id: str
-    other_character_id: Optional[str] = None
+    holder_id: Optional[int] = None
+    other_character_id: Optional[int] = None
     boon_type: str = Field(default="trivial", max_length=50)
     is_owed: bool = Field(default=True)
     description: Optional[str] = None
-    boon_date: datetime = Field(default_factory=datetime.utcnow)
+    boon_date: Optional[datetime] = None
     status: str = Field(default="active", max_length=50)
 
 
@@ -457,8 +465,8 @@ class BoonCreate(BoonBase):
 
 class BoonUpdate(BaseSchema):
     """Schema for updating a boon."""
-    holder_id: Optional[str] = None
-    other_character_id: Optional[str] = None
+    holder_id: Optional[int] = None
+    other_character_id: Optional[int] = None
     boon_type: Optional[str] = Field(None, max_length=50)
     is_owed: Optional[bool] = None
     description: Optional[str] = None
@@ -479,8 +487,8 @@ class BoonListResponse(BaseSchema):
 
 class BoonFilter(BaseSchema):
     """Schema for filtering boons."""
-    holder_id: Optional[str] = None
-    other_character_id: Optional[str] = None
+    holder_id: Optional[int] = None
+    other_character_id: Optional[int] = None
     boon_type: Optional[str] = None
     status: Optional[str] = None
 
@@ -489,7 +497,7 @@ class BoonFilter(BaseSchema):
 
 class BoonHistoryBase(BaseSchema):
     """Base boon history schema."""
-    boon_id: str
+    boon_id: int
     change_type: str = Field(..., max_length=50)
     previous_status: Optional[str] = Field(None, max_length=50)
     new_status: Optional[str] = Field(None, max_length=50)

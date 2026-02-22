@@ -15,7 +15,7 @@ class PlayerService:
     def __init__(self, db: AsyncSession):
         self.db = db
     
-    async def get_by_id(self, player_id: str) -> Optional[Player]:
+    async def get_by_id(self, player_id: int) -> Optional[Player]:
         """Get player by ID."""
         result = await self.db.execute(
             select(Player).where(Player.id == player_id)
@@ -65,7 +65,7 @@ class PlayerService:
         await self.db.refresh(player)
         return player
     
-    async def update(self, player_id: str, data: PlayerUpdate) -> Optional[Player]:
+    async def update(self, player_id: int, data: PlayerUpdate) -> Optional[Player]:
         """Update a player."""
         player = await self.get_by_id(player_id)
         if not player:
@@ -80,7 +80,7 @@ class PlayerService:
         await self.db.refresh(player)
         return player
     
-    async def delete(self, player_id: str) -> bool:
+    async def delete(self, player_id: int) -> bool:
         """Delete a player."""
         player = await self.get_by_id(player_id)
         if not player:
@@ -90,7 +90,7 @@ class PlayerService:
         await self.db.commit()
         return True
     
-    async def add_pp(self, player_id: str, amount: int) -> Optional[Player]:
+    async def add_pp(self, player_id: int, amount: int) -> Optional[Player]:
         """Add player points."""
         player = await self.get_by_id(player_id)
         if not player:
@@ -103,7 +103,7 @@ class PlayerService:
         await self.db.refresh(player)
         return player
     
-    async def get_character_count(self, player_id: str) -> int:
+    async def get_character_count(self, player_id: int) -> int:
         """Get character count for a player."""
         result = await self.db.execute(
             select(func.count())

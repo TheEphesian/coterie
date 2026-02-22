@@ -72,7 +72,7 @@ async def test_get_character(api_client: AsyncClient, api_v1_prefix: str):
 @pytest.mark.asyncio
 async def test_get_character_not_found(api_client: AsyncClient, api_v1_prefix: str):
     """Test getting a non-existent character."""
-    response = await api_client.get(f"{api_v1_prefix}/characters/non-existent-id")
+    response = await api_client.get(f"{api_v1_prefix}/characters/99999")
     assert response.status_code == 404
     
     data = response.json()

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import List, Optional, TYPE_CHECKING
-from sqlalchemy import String, Integer, Boolean, ForeignKey, DateTime
+from sqlalchemy import String, Integer, Boolean, ForeignKey, DateTime, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models.base import Base
@@ -21,14 +21,14 @@ class Character(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
-    nature: Mapped[str] = mapped_column(String(50))
-    demeanor: Mapped[str] = mapped_column(String(50))
-    player_name: Mapped[str] = mapped_column(String(100))  # Renamed from player to avoid confusion
-    status: Mapped[str] = mapped_column(String(50))
+    nature: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, default="")
+    demeanor: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, default="")
+    player_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, default="")
+    status: Mapped[str] = mapped_column(String(50), default="active")
     narrator: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     is_npc: Mapped[bool] = mapped_column(Boolean, default=False)
-    start_date: Mapped[datetime] = mapped_column(DateTime)
-    last_modified: Mapped[datetime] = mapped_column(DateTime)
+    start_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    last_modified: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     biography: Mapped[Optional[str]] = mapped_column(String)
     notes: Mapped[Optional[str]] = mapped_column(String(2000))
     
@@ -45,15 +45,22 @@ class Character(Base):
     # Experience points
     xp_earned: Mapped[int] = mapped_column(Integer, default=0)
     xp_unspent: Mapped[int] = mapped_column(Integer, default=0)
-    
+
+    # Race-specific data stored as JSON (used by API)
+    data: Mapped[dict] = mapped_column(JSON, default=dict)
+
     # Discriminator column for polymorphic identity
     type: Mapped[str] = mapped_column(String(50))
-    
+
     # Relationships
     chronicle: Mapped[Optional["Chronicle"]] = relationship(back_populates="characters")
     player: Mapped[Optional["Player"]] = relationship(back_populates="characters")
-    larp_traits: Mapped[List["LarpTrait"]] = relationship(back_populates="character")
-    traits: Mapped[List["Trait"]] = relationship(back_populates="character")
+    larp_traits: Mapped[List["LarpTrait"]] = relationship(
+        back_populates="character", lazy="selectin"
+    )
+    traits: Mapped[List["Trait"]] = relationship(
+        back_populates="character", lazy="selectin"
+    )
     attended_sessions: Mapped[List["GameSession"]] = relationship(
         secondary=session_attendance,
         back_populates="attending_characters"
@@ -63,6 +70,32 @@ class Character(Base):
         "polymorphic_identity": "character",
         "polymorphic_on": "type",
     }
+
+    @property
+    def race_type(self) -> str:
+        """API compatibility: returns race_type from data dict or type discriminator."""
+        if self.data and "race_type" in self.data:
+            return self.data["race_type"]
+        return self.type
+
+    @race_type.setter
+    def race_type(self, value: str) -> None:
+        """Store race_type in the data dict."""
+        if self.data is None:
+            self.data = {}
+        data = dict(self.data)
+        data["race_type"] = value
+        self.data = data
+
+    @property
+    def created_at(self) -> Optional[datetime]:
+        """API compatibility alias for start_date."""
+        return self.start_date
+
+    @property
+    def updated_at(self) -> Optional[datetime]:
+        """API compatibility alias for last_modified."""
+        return self.last_modified
 
     def __repr__(self) -> str:
         return f"<Character {self.name} ({self.player_name})>" 

@@ -12,10 +12,10 @@ from .vampire import Vampire, Discipline, Ritual, Bond
 from .menu import MenuCategory, MenuItem
 from .staff import Staff
 
-# Grapevine-modern models (secondary - TODO: fix primary keys)
-# from .apr import Action, Plot, Rumor
-# from .item_location import Item, Location, CharacterItem, CharacterLocation
-# from .boon import Boon, BoonHistory
+# Extended models (used by API)
+from .game import Game
+from .apr import Action, Plot, Rumor
+from .boon import Boon, BoonHistory
 
 __all__ = [
     "Base",
@@ -33,4 +33,10 @@ __all__ = [
     "MenuCategory",
     "MenuItem",
     "Staff",
+    "Game",
+    "Action",
+    "Plot",
+    "Rumor",
+    "Boon",
+    "BoonHistory",
 ]
