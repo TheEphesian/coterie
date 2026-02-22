@@ -50,13 +50,7 @@ class Game(Base):
     # File Format Version for compatibility
     file_format_version: Mapped[str] = mapped_column(String(10), default="3.01")
     
-    # Relationships
-    players: Mapped[list["Player"]] = relationship(
-        "Player", back_populates="game", lazy="selectin"
-    )
-    characters: Mapped[list["Character"]] = relationship(
-        "Character", back_populates="game", lazy="selectin"
-    )
+    # Relationships (viewonly to avoid back_populates conflicts with Coterie models)
     actions: Mapped[list["Action"]] = relationship(
         "Action", back_populates="game", lazy="selectin"
     )
@@ -65,12 +59,6 @@ class Game(Base):
     )
     rumors: Mapped[list["Rumor"]] = relationship(
         "Rumor", back_populates="game", lazy="selectin"
-    )
-    items: Mapped[list["Item"]] = relationship(
-        "Item", back_populates="game", lazy="selectin"
-    )
-    locations: Mapped[list["Location"]] = relationship(
-        "Location", back_populates="game", lazy="selectin"
     )
     calendar_entries: Mapped[list["Calendar"]] = relationship(
         "Calendar", back_populates="game", lazy="selectin"
@@ -85,11 +73,12 @@ class Game(Base):
 
 class Calendar(Base):
     """Game date entries for the chronicle."""
-    
+
     __tablename__ = "calendar"
-    
-    game_id: Mapped[str] = mapped_column(
-        ForeignKey("games.id"), nullable=False, index=True
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("games.id"), nullable=True, index=True
     )
     entry_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
@@ -101,11 +90,12 @@ class Calendar(Base):
 
 class XPAward(Base):
     """Standard XP and PP award templates."""
-    
+
     __tablename__ = "xp_awards"
-    
-    game_id: Mapped[str] = mapped_column(
-        ForeignKey("games.id"), nullable=False, index=True
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("games.id"), nullable=True, index=True
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -119,11 +109,12 @@ class XPAward(Base):
 
 class OutputTemplate(Base):
     """Templates for generating reports and character sheets."""
-    
+
     __tablename__ = "output_templates"
-    
-    game_id: Mapped[str] = mapped_column(
-        ForeignKey("games.id"), nullable=False, index=True
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("games.id"), nullable=True, index=True
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     template_type: Mapped[str] = mapped_column(
@@ -141,11 +132,12 @@ class OutputTemplate(Base):
 
 class HealthLevel(Base):
     """Health level configuration for games."""
-    
+
     __tablename__ = "health_levels"
-    
-    game_id: Mapped[str] = mapped_column(
-        ForeignKey("games.id"), nullable=False, index=True
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("games.id"), nullable=True, index=True
     )
     level_order: Mapped[int] = mapped_column(Integer, nullable=False)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -160,13 +152,14 @@ class HealthLevel(Base):
 
 class Rote(Base):
     """Mage rotes (prepared spells)."""
-    
+
     __tablename__ = "rotes"
-    
-    game_id: Mapped[str] = mapped_column(
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("games.id"), nullable=True, index=True
     )
-    character_id: Mapped[Optional[str]] = mapped_column(
+    character_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("characters.id"), nullable=True, index=True
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -178,18 +171,17 @@ class Rote(Base):
     
     # Relationships
     game: Mapped[Optional[Game]] = relationship("Game")
-    character: Mapped[Optional["Character"]] = relationship(
-        "Character", back_populates="rotes"
-    )
+    character: Mapped[Optional["Character"]] = relationship("Character")
 
 
 class SavedQuery(Base):
     """Saved queries for searching characters."""
-    
+
     __tablename__ = "saved_queries"
-    
-    game_id: Mapped[str] = mapped_column(
-        ForeignKey("games.id"), nullable=False, index=True
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("games.id"), nullable=True, index=True
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

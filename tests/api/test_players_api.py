@@ -64,7 +64,7 @@ async def test_get_player(api_client: AsyncClient, api_v1_prefix: str):
 @pytest.mark.asyncio
 async def test_get_player_not_found(api_client: AsyncClient, api_v1_prefix: str):
     """Test getting a non-existent player."""
-    response = await api_client.get(f"{api_v1_prefix}/players/non-existent-id")
+    response = await api_client.get(f"{api_v1_prefix}/players/99999")
     assert response.status_code == 404
     
     data = response.json()

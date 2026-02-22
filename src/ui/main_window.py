@@ -23,6 +23,8 @@ from .dialogs.character_creation import CharacterCreationDialog
 from .dialogs.chronicle_creation import ChronicleCreationDialog
 from .dialogs.data_manager_dialog import DataManagerDialog
 from .widgets.character_list_widget import CharacterListWidget
+from .widgets.plots_widget import PlotsWidget
+from .widgets.rumors_widget import RumorsWidget
 from .sheets.vampire_sheet import VampireSheet
 from src.utils.data_loader import (
     load_data, get_category, get_descriptions,
@@ -410,61 +412,11 @@ class MainWindow(QMainWindow):
     
     def _create_plots_widget(self) -> None:
         """Create the Plots tab widget."""
-        self.plots_widget = QWidget()
-        self.plots_layout = QVBoxLayout(self.plots_widget)
-        
-        # Add a heading
-        heading_label = QLabel("Plots Management")
-        heading_label.setStyleSheet("font-size: 16pt; font-weight: bold;")
-        self.plots_layout.addWidget(heading_label)
-        
-        # Add explanation label
-        info_label = QLabel(
-            "Plots are story elements that drive your chronicle forward. "
-            "Create and manage plots to track your chronicle's storylines."
-        )
-        info_label.setWordWrap(True)
-        self.plots_layout.addWidget(info_label)
-        
-        # Add button for creating a new plot
-        new_plot_button = QPushButton("Create New Plot")
-        new_plot_button.setMinimumHeight(40)
-        self.plots_layout.addWidget(new_plot_button)
-        
-        # Add placeholder for plot list
-        self.plots_layout.addWidget(QLabel("No plots available yet"))
-        
-        # Add stretch to push everything up
-        self.plots_layout.addStretch()
-        
+        self.plots_widget = PlotsWidget()
+
     def _create_rumors_widget(self) -> None:
         """Create the Rumors tab widget."""
-        self.rumors_widget = QWidget()
-        self.rumors_layout = QVBoxLayout(self.rumors_widget)
-        
-        # Add a heading
-        heading_label = QLabel("Rumors Management")
-        heading_label.setStyleSheet("font-size: 16pt; font-weight: bold;")
-        self.rumors_layout.addWidget(heading_label)
-        
-        # Add explanation label
-        info_label = QLabel(
-            "Rumors are pieces of information that characters can learn in the game. "
-            "Create and manage rumors to enhance your chronicle's intrigue."
-        )
-        info_label.setWordWrap(True)
-        self.rumors_layout.addWidget(info_label)
-        
-        # Add button for creating a new rumor
-        new_rumor_button = QPushButton("Create New Rumor")
-        new_rumor_button.setMinimumHeight(40)
-        self.rumors_layout.addWidget(new_rumor_button)
-        
-        # Add placeholder for rumor list
-        self.rumors_layout.addWidget(QLabel("No rumors available yet"))
-        
-        # Add stretch to push everything up
-        self.rumors_layout.addStretch()
+        self.rumors_widget = RumorsWidget()
         
     def _refresh_characters(self) -> None:
         """Refresh the character list."""
@@ -684,75 +636,78 @@ class MainWindow(QMainWindow):
             
     def _save_character(self, character_id: int) -> None:
         """Save changes to a character.
-        
+
         Args:
             character_id: ID of the character to save
         """
+        session = None
         try:
             # Get character sheet
             if character_id not in self.open_character_sheets:
                 return
-                
+
             tab_index = self.open_character_sheets[character_id]
             sheet = self.tabs.widget(tab_index)
-            
+
             if not hasattr(sheet, 'get_character_data'):
                 return
-                
+
             # Get updated data
             data = sheet.get_character_data()
-            
-            # Save to database
+            larp_traits_data = data.get("larp_traits", {})
+
+            # Save to database using a single session
             session = get_session()
-            
-            # Get character using DataLoader for proper session handling
-            character = load_character(character_id)
-            
+            character = session.query(Character).filter(Character.id == character_id).first()
+
             if not character:
                 QMessageBox.warning(self, "Warning", "Character not found.")
                 return
-                
+
             # Update character based on type
             if isinstance(character, Vampire) and isinstance(sheet, VampireSheet):
                 # Update basic information
-                character.name = data["name"]
-                character.player_name = data["player"]
-                character.nature = data["nature"]
-                character.demeanor = data["demeanor"]
-                
+                character.name = data.get("name", character.name)
+                character.player_name = data.get("player_name", "")
+                character.nature = data.get("nature", "")
+                character.demeanor = data.get("demeanor", "")
+                character.narrator = data.get("narrator", "")
+
                 # Update vampire-specific information
-                character.clan = data["clan"]
-                character.generation = data["generation"]
-                character.sect = data["sect"]
-                
-                # Update virtues and path
-                character.conscience = data["conscience"]
-                character.temp_conscience = data["temp_conscience"]
-                character.self_control = data["self_control"]
-                character.temp_self_control = data["temp_self_control"]
-                character.courage = data["courage"]
-                character.temp_courage = data["temp_courage"]
-                character.path = data["path"]
-                character.path_traits = data["path_traits"]
-                character.temp_path_traits = data["temp_path_traits"]
-                
-                # Update stats
-                character.willpower = data["willpower"]
-                character.temp_willpower = data["temp_willpower"]
-                character.blood = data["blood"]
-                character.temp_blood = data["temp_blood"]
-                
+                character.clan = data.get("clan", character.clan)
+                character.generation = data.get("generation", character.generation)
+                character.sect = data.get("sect", "")
+
+                # Derive virtue counts from larp_traits lists
+                character.conscience = len(larp_traits_data.get("conscience", []))
+                character.temp_conscience = character.conscience
+                character.self_control = len(larp_traits_data.get("self-control", []))
+                character.temp_self_control = character.self_control
+                character.courage = len(larp_traits_data.get("courage", []))
+                character.temp_courage = character.courage
+
+                # Derive path trait count from larp_traits
+                character.path_traits = len(larp_traits_data.get("path", []))
+                character.temp_path_traits = character.path_traits
+
+                # Derive stat counts from larp_traits lists
+                character.willpower = len(larp_traits_data.get("willpower", []))
+                character.temp_willpower = character.willpower
+                character.blood = len(larp_traits_data.get("blood", []))
+                character.temp_blood = character.blood
+
                 # Update last modified
                 character.last_modified = datetime.now()
-                
-                # TODO: Handle traits
-                
-            session.add(character)  # Make sure the character is attached to this session
+
+                # Save LARP traits
+                self._save_larp_traits(session, character, larp_traits_data)
+
+            session.add(character)
             session.commit()
-            
+
             self.status_bar.showMessage(f"Saved character: {character.name}")
             logger.info(f"Saved character: {character.name}")
-            
+
         except Exception as e:
             error_msg = f"Failed to save character: {str(e)}"
             logger.error(error_msg)
@@ -760,7 +715,49 @@ class MainWindow(QMainWindow):
             if session:
                 session.rollback()
         finally:
-            session.close()
+            if session:
+                session.close()
+
+    def _save_larp_traits(self, session: Session, character, larp_traits_data: dict) -> None:
+        """Replace all LARP traits for a character with the provided data.
+
+        Args:
+            session: Active database session
+            character: Character model instance
+            larp_traits_data: Dict mapping category names to lists of trait name strings
+        """
+        from src.core.models.larp_trait import LarpTrait, TraitCategory
+
+        # Delete all existing larp_traits for this character
+        existing = session.query(LarpTrait).filter(LarpTrait.character_id == character.id).all()
+        for trait in existing:
+            session.delete(trait)
+        session.flush()
+
+        # Recreate larp_traits from data
+        for category_name, trait_names in larp_traits_data.items():
+            if not trait_names:
+                continue
+
+            # Find or create the TraitCategory
+            cat = session.query(TraitCategory).filter(
+                TraitCategory.name == category_name
+            ).first()
+            if not cat:
+                cat = TraitCategory(name=category_name)
+                session.add(cat)
+                session.flush()
+
+            # Create a LarpTrait record for each trait name
+            for trait_name in trait_names:
+                trait = LarpTrait(
+                    character_id=character.id,
+                    name=trait_name,
+                    display_name=trait_name,
+                    description=trait_name,
+                )
+                trait.categories.append(cat)
+                session.add(trait)
             
     def _show_data_manager(self) -> None:
         """Show the data manager dialog."""
