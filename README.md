@@ -1,86 +1,106 @@
-# Coterie
+# Coterie (Grapevine Modern)
 
-A modern Python port of the Grapevine character and chronicle management system for Mind's Eye Theater LARP.
+A modern Python implementation of the Grapevine LARP character management system.
 
-## Overview
+**Merged from:** Coterie UI + Grapevine-Modern API  
+**Date:** February 21, 2026
 
-Coterie is a modern, cross-platform reimplementation of the Grapevine character management system. It is built with Python, SQLAlchemy, and PyQt6, offering a fresh and maintainable codebase while preserving the functionality of the original application.
+## Features
 
-### Key Features
+- **Desktop UI:** PyQt6-based character management interface
+- **REST API:** FastAPI backend for integrations
+- **12 Character Types:** Vampire, Werewolf, Mage, Changeling, Wraith, Mummy, Kuei-Jin, Fera, Hunter, Demon, Mortal, Various
+- **LARP Traits:** Mind's Eye Theater adjective-based trait system
+- **Legacy Support:** Import from .gv3, .gvm, .gex files
+- **Cross-Platform:** Windows, macOS, Linux
 
-- **Modern UI** - Clean, intuitive PyQt6-based interface
-- **Cross-Platform** - Runs on Windows, macOS, and Linux
-- **Data Preservation** - Import from original Grapevine files (.gvc and .gex)
-- **Enhanced Features** - Modern improvements while preserving original functionality
-- **Type Safety** - Fully type-hinted Python codebase
+## Quick Start
+
+```bash
+# Setup
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+# Run Desktop UI
+python run_ui.py
+
+# Run API (in another terminal)
+uvicorn src.api.main:app --reload
+```
+
+## Project Structure
+
+```
+Coterie/
+├── src/
+│   ├── api/              # FastAPI REST API
+│   ├── core/
+│   │   ├── models/       # SQLAlchemy database models
+│   │   ├── config.py     # Configuration
+│   │   └── engine.py     # Database engine (sync for UI)
+│   ├── characters/       # Race-specific character classes
+│   ├── legacy/           # Legacy file parsers (GV3, GVM, GEX)
+│   ├── ui/               # PyQt6 desktop UI
+│   │   ├── main_window.py
+│   │   ├── sheets/       # Character sheets
+│   │   ├── dialogs/      # Dialogs
+│   │   └── widgets/      # UI widgets
+│   └── utils/            # Utilities
+├── tests/                # Test suite
+├── migrations/           # Alembic migrations
+├── archive/              # Legacy VB6 source & sample data
+└── docs/                 # Documentation
+```
+
+## Entry Points
+
+| Command | Description |
+|---------|-------------|
+| `python run_ui.py` | Launch desktop UI |
+| `uvicorn src.api.main:app --reload` | Start REST API |
+| `pytest` | Run tests |
+| `alembic upgrade head` | Apply migrations |
 
 ## Current Status
 
-Coterie is in early development (Phase 1). Currently implemented:
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Desktop UI | ✅ Working | Vampire sheet, character creation, import dialog |
+| REST API | ⚠️ Partial | Models need primary keys added |
+| Database Models | ✅ Working | Coterie-style polymorphic models |
+| Character Races | ✅ Complete | 12 race types implemented |
+| Legacy Parsers | ⚠️ Framework | Structure in place, needs completion |
+| LARP Traits | ✅ Working | Adjective-based trait system |
 
-- Core application framework
-- Database models for characters
-- Character creation dialog
-- Import dialog for Grapevine 3.x (.gvc) and exported (.gex) files
-- Vampire character sheet
-- Trait widgets
+## API Endpoints (When Fixed)
 
-See `docs/status.md` for complete details on project status.
+- `GET /api/v1/characters` - List characters
+- `POST /api/v1/characters` - Create character
+- `GET /api/v1/players` - List players
+- `POST /api/v1/imports/legacy` - Import legacy files
 
-## Installation
-
-### Requirements
-
-- Python 3.8 or higher
-- PyQt6
-- SQLAlchemy
-- Other dependencies as listed in requirements.txt
-
-### Development Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/coterie.git
-   cd coterie
-   ```
-
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   venv\Scripts\activate     # Windows
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Run the application:
-   ```bash
-   python -m coterie
-   ```
+API docs available at http://localhost:8000/docs when running.
 
 ## Documentation
 
-Comprehensive documentation is available in the `/docs` directory:
+- `docs/Grapevine-Migration-PRD.md` - Full requirements document
+- `docs/MIGRATION_PLAN.md` - This merge's plan
+- `archive/` - VB6 source code and sample data files
 
-- `docs/index.md` - Documentation index and overview
-- `docs/status.md` - Current project status
-- `docs/development-session-summary.md` - Latest development details
-- `docs/architecture.md` - Technical architecture
-- `docs/ui-components.md` - UI component documentation
+## Legacy File Support
 
-## Contributing
+| Format | Description | Status |
+|--------|-------------|--------|
+| .gv3 | Game database files | Parser framework |
+| .gvm | Menu files | Parser framework |
+| .gex | Character export | Parser framework |
 
-Contributions are welcome! Please see `docs/contributing.md` for guidelines.
+## Merged From
+
+- **Coterie** (original) - PyQt6 UI, LARP traits, vampire sheet
+- **Grapevine-Modern** - FastAPI backend, 12 race classes, tests
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Original Grapevine developers for creating the foundation
-- Mind's Eye Theater by White Wolf Publishing
-- Contributors and supporters of this project
+MIT License

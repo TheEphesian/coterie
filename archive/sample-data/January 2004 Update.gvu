@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<grapevinemenus version="3" size="12">
+  <description>
+    <![CDATA[Additions from Vampire by Gaslight, Tribebook: Stargazers, Tribebook: Uktena and Tribebook: Wendigo.]]>
+  </description>
+  <menu name="Abilities, Werewolf" category="3" abc="yes" required="yes" display="0">
+    <item name="Stargazing"/>
+    <item name="Gesture"/>
+    <item name="Stickball"/>
+  </menu>
+  <menu name="Camps, Werewolf" category="3" abc="yes" required="yes" display="0">
+    <item name="Ana-gamin"/>
+    <item name="Children of Wyld"/>
+    <item name="Heavenly Successors of the Demon-Eater"/>
+    <item name="Ouroboroans"/>
+    <item name="Path Dancers"/>
+    <item name="Sacred Thread"/>
+    <item name="Society of the Bitter Frost"/>
+    <item name="Trance Runners"/>
+    <item name="Web Walkers"/>
+    <item name="Zephyr"/>
+  </menu>
+  <menu name="Flaws, Werewolf" category="3" abc="yes" negative="yes" required="yes" display="4">
+    <item name="Drama Queen" cost="3"/>
+    <item name="Enraged Ancestor" cost="4"/>
+  </menu>
+  <menu name="Flaws, Vampire" category="2" abc="yes" negative="yes" required="yes" display="4">
+    <item name="Archaic" cost="2"/>
+    <item name="Dangerous Bias" cost="3"/>
+    <item name="Duelist Reputation" cost="1-3"/>
+    <item name="Frail Stomach" cost="2"/>
+    <item name="Gulpy" cost="2-6"/>
+    <item name="Harbinger of Gehenna" cost="5"/>
+    <item name="Pox" cost="3"/>
+    <item name="Underprivileged Origins" cost="1"/>
+  </menu>
+  <menu name="Merits" abc="yes" required="yes" display="4">
+    <item name="Medium" cost="2 or 4"/>
+  </menu>
+  <menu name="Merits, Werewolf" category="3" abc="yes" required="yes" display="4">
+    <item name="Camouflage" cost="2"/>
+    <item name="Mewa Birthmarks" cost="1"/>
+    <item name="Tranquil Soul" cost="3"/>
+  </menu>
+  <menu name="Merits, Vampire" category="2" abc="yes" required="yes" display="4">
+    <item name="Downey" cost="2-6"/>
+    <item name="Duelist Reputation" cost="1-3"/>
+    <item name="Humanity's Window" cost="3"/>
+    <item name="Hypersensitive Palate" cost="2"/>
+    <item name="Literacy" cost="1"/>
+    <item name="Mechanical Aptitude" cost="2"/>
+    <item name="Natural Cipher" cost="2"/>
+    <item name="Prophetic" cost="3"/>
+    <item name="Secret Society Member" cost="2"/>
+    <item name="Wit" cost="1-3"/>
+  </menu>
+  <menu name="Metis Deformities" category="3" abc="yes" negative="yes" display="0">
+    <item name="Birthmarks"/>
+    <item name="Third Eye"/>
+  </menu>
+  <menu name="Rites, Werewolf, Tribal" category="3" abc="yes" autonote="yes" display="5">
+    <submenu name="Stargazers" link="Stargazers, Rites"/>
+    <submenu name="Uktena" link="Uktena, Rites"/>
+    <submenu name="Wendigo" link="Wendigo, Rites"/>
+  </menu>
+  <menu name="Stargazers" category="3" abc="no" autonote="yes" display="5">
+    <item name="Balance" cost="3" note="basic"/>
+    <item name="Catfeet" cost="3" note="basic"/>
+    <item name="Channeling" cost="3" note="basic"/>
+    <item name="Drunken Spider" cost="3" note="basic"/>
+    <item name="Falling Touch" cost="3" note="basic"/>
+    <item name="Imbalance" cost="3" note="basic"/>
+    <item name="Inner Strength" cost="3" note="basic"/>
+    <item name="Measured Step" cost="3" note="basic, wyld west"/>
+    <item name="Paper Butterfly" cost="3" note="basic"/>
+    <item name="Sense Wyrm" cost="3" note="basic"/>
+    <item name="Surface Attunement" cost="3" note="basic"/>
+    <item name="Wuxing" cost="3" note="basic"/>
+    <item name="Clarity" cost="6" note="int."/>
+    <item name="Counting Coup" cost="6" note="int., wyld west"/>
+    <item name="Mastery of the Mortal Coil" cost="6" note="int., wyld west"/>
+    <item name="Merciful Blow" cost="6" note="int."/>
+    <item name="Mouthpiece of the Successor" cost="6" note="int."/>
+    <item name="Prenatural Awareness" cost="6" note="int."/>
+    <item name="The Silken Cloth" cost="6" note="int."/>
+    <item name="Strike the Air" cost="6" note="int."/>
+    <item name="Summon the Chu-Mong" cost="6" note="int."/>
+    <item name="Wind's Returning Favor" cost="6" note="int."/>
+    <item name="Ancestral Incarnation" cost="9" note="adv."/>
+    <item name="Circular Attack" cost="9" note="adv."/>
+    <item name="Rage at Shadows" cost="9" note="adv., wyld west"/>
+    <item name="Spirit Drain" cost="9" note="adv."/>
+    <item name="Vision of the True Spirit" cost="9" note="adv., wyld west"/>
+    <item name="Wisdom from the Heavens" cost="9" note="adv., wyld west"/>
+    <item name="Wisdom of the Seer" cost="9" note="adv."/>
+    <submenu name="Mantra Gifts" link="Stargazers, Mantra Gifts">
+    <submenu name="Camp Gifts" link="Stargazers, Camp Gifts">
+  </menu>
+  <menu name="Stargazers, Camp Gifts" category="3" abc="no" autonote="yes" display="5">
+    <item name="Reverie of the Kol-Kin" cost="3" note="basic demon eaters"/>
+    <item name="Sense the Demonic" cost="3" note="basic demon eaters"/>
+    <item name="The Teacher's Ease" cost="3" note="basic sacred thread"/>
+    <item name="Word-to-Weapon" cost="3" note="basic sacred thread"/>
+    <item name="Bird Bones" cost="6" note="int. trance runners"/>
+    <item name="Seven Mile Leap" cost="6" note="int. trance runners"/>
+    <item name="Eyes of Ignorance" cost="9" note="adv. sacred thread"/>
+  </menu>
+  <menu name="Stargazers, Mantra Gifts" category="3" abc="no" autonote="yes" display="5">
+    <item name="Seed of Speech" cost="3" note="basic"/>
+    <item name="Sound of Suffering" cost="3" note="basic"/>
+    <item name="Burning Fire-Mind" cost="6" note="int."/>
+    <item name="Seeking the Void" cost="6" note="int."/>
+    <item name="Liberation of Flesh" cost="9" note="adv."/>
+    <item name="Thought-Form of the Twelve Ministers" cost="12" note="legend"/>
+  </menu>
+  <menu name="Stargazers, Rites" category="3" abc="no" autonote="yes" display="5">
+    <item name="Tea Ceremony" cost="1" note="minor"/>
+    <item name="Buying Back the Soul" cost="2" note="basic death"/>
+    <item name="Rite of Knowing" cost="2" note="basic mystic"/>
+    <item name="Rite of Meeting" cost="2" note="basic accord"/>
+    <item name="Vigor of the Departed" cost="2" note="basic death"/>
+    <item name="Banishment of the Self" cost="4" note="int. accord"/>
+    <item name="Pilgrimage of Non-Being" cost="4" note="int. mystic"/>
+    <item name="Rite of Rebalancing" cost="4" note="int. accord"/>
+    <item name="Rite of the Seed of Desire" cost="4" note="int. mystic"/>
+    <item name="Thaipusam" cost="4" note="int. accord"/>
+    <item name="Rite of the Beating Heart" cost="6" note="adv. caern"/>
+  </menu>
+  <menu name="Totems" category="3" abc="yes" required="yes" display="0">
+    <item name="Suzaku the Red Bird"/>
+    <item name="Bya-akko the White Tiger"/>
+    <item name="Seiryuu the Azure Dragon"/>
+    <item name="Genbu the Black Tortoise"/>
+    <item name="Feng-Huang, Emperor of Birds"/>
+    <item name="Moose"/>
+    <item name="Caribou"/>
+    <item name="Sturgeon"/>
+    <item name="Rabbit"/>
+    <item name="Goose"/>
+    <item name="Porcupine"/>
+    <item name="Beaver"/>
+    <item name="Wild Turkey"/>
+    <item name="Gila Monster"/>
+    <item name="Hummingbird"/>
+    <item name="Dragonfly"/>
+    <item name="Roadrunner"/>
+  </menu>
+  <menu name="Uktena" category="3" abc="no" autonote="yes" display="5">
+    <item name="Another's Mocassins" cost="3" note="basic"/>
+    <item name="Blending" cost="3" note="basic"/>
+    <item name="Blur of the Milky Eye" cost="3" note="basic"/>
+    <item name="Coils of the Serpent" cost="3" note="basic"/>
+    <item name="Flick of the Fish's Tail" cost="3" note="basic, wyld west"/>
+    <item name="Implacable Grip" cost="3" note="basic"/>
+    <item name="Indian Giver" cost="3" note="basic"/>
+    <item name="Overlook" cost="3" note="basic"/>
+    <item name="Pass as the Shadow" cost="3" note="basic, wyld west"/>
+    <item name="Reveal the Hidden" cost="3" note="basic"/>
+    <item name="Sense Magic" cost="3" note="basic"/>
+    <item name="Sense Medicine" cost="3" note="basic, wyld west"/>
+    <item name="Sense the Tunneler's Passage" cost="3" note="basic, wyld west"/>
+    <item name="Shroud" cost="3" note="basic"/>
+    <item name="Spirit of the Bird" cost="3" note="basic"/>
+    <item name="Spirit of the Fish" cost="3" note="basic"/>
+    <item name="Spirit Speech" cost="3" note="basic"/>
+    <item name="Strut" cost="3" note="basic"/>
+    <item name="Uktena's Freezing Stare" cost="3" note="basic"/>
+    <item name="Banish Totem" cost="6" note="int."/>
+    <item name="Call Elemental" cost="6" note="int."/>
+    <item name="Call Flame Spirit" cost="6" note="int."/>
+    <item name="Call the Four Brothers" cost="6" note="int., wyld west"/>
+    <item name="Death Trance" cost="6" note="int."/>
+    <item name="Flame of the Sun Dance" cost="6" note="int., wyld west"/>
+    <item name="Guardian's Fortitude" cost="6" note="int."/>
+    <item name="Hand of the Earth Lords" cost="6" note="int."/>
+    <item name="Invisibility" cost="6" note="int."/>
+    <item name="Lay of the Land" cost="6" note="int."/>
+    <item name="Secrets" cost="6" note="int."/>
+    <item name="Sharing Raven's Support" cost="6" note="int., wyld west"/>
+    <item name="Spirit's Horse" cost="6" note="int."/>
+    <item name="Wisdom of the Ancient Ways" cost="6" note="int."/>
+    <item name="Becoming Uktena" cost="9" note="adv."/>
+    <item name="Call on Ancient Medicine" cost="9" note="adv., wyld west"/>
+    <item name="Fabric of the Mind" cost="9" note="adv."/>
+    <item name="Fetish Doll" cost="9" note="adv."/>
+    <item name="Fist of the Winds" cost="9" note="adv., wyld west"/>
+    <item name="Kachina's Luck" cost="9" note="adv., wyld west"/>
+    <item name="Pointing the Bone" cost="9" note="adv."/>
+    <item name="Uktena's Glare" cost="9" note="adv."/>
+  </menu>
+  <menu name="Uktena, Rites" category="3" abc="no" autonote="yes" display="5">
+    <item name="Prayer of the Seeking" cost="2" note="basic mystic"/>
+    <item name="Rite of the Sacred Fire" cost="2" note="basic mystic"/>
+    <item name="Rite of Balance" cost="4" note="int. accord"/>
+    <item name="Rite of Invitation to the Ancestors" cost="4" note="int. mystic"/>
+    <item name="Rite of the Spirit Cage" cost="4" note="int. mystic"/>
+    <item name="Mockery Curing Way" cost="6" note="adv. mystic"/>
+    <item name="Rite of Bane Binding" cost="6" note="adv. mystic"/>
+  </menu>
+  <menu name="Wendigo" category="3" abc="no" autonote="yes" display="5">
+    <item name="Call the Breeze" cost="3" note="basic"/>
+    <item name="Camouflage" cost="3" note="basic"/>
+    <item name="Cutting Wind" cost="3" note="basic"/>
+    <item name="Devouring Rime" cost="3" note="basic"/>
+    <item name="Ice Echo" cost="3" note="basic"/>
+    <item name="Lift-Your-Leg" cost="3" note="basic"/>
+    <item name="Nose-to-Tail" cost="3" note="basic"/>
+    <item name="Resist Pain" cost="3" note="basic"/>
+    <item name="Salmon Swim" cost="3" note="basic"/>
+    <item name="Scent of the Man-Eater" cost="3" note="basic"/>
+    <item name="Song of the Seasons" cost="3" note="basic, wyld west"/>
+    <item name="Speak with the Wind Spirits" cost="3" note="basic"/>
+    <item name="Tourniquet" cost="3" note="basic"/>
+    <item name="Bark of Willow" cost="6" note="int."/>
+    <item name="Balance of Wormwood" cost="6" note="int."/>
+    <item name="Bloody Feast" cost="6" note="int."/>
+    <item name="Bond with the Earth" cost="6" note="int., wyld west"/>
+    <item name="Call the Cannibal Spirit" cost="6" note="int."/>
+    <item name="Chill of Early Frost" cost="6" note="int."/>
+    <item name="Counting Coup" cost="6" note="int."/>
+    <item name="Icicle-Hide" cost="6" note="int."/>
+    <item name="Last Stand" cost="6" note="int."/>
+    <item name="Shelter of Needles" cost="6" note="int."/>
+    <item name="Sky Running" cost="6" note="int."/>
+    <item name="Strength of Pine" cost="6" note="int."/>
+    <item name="Whiteout" cost="6" note="int."/>
+    <item name="Winter Frost" cost="6" note="int., wyld west"/>
+    <item name="Wisdom of the Ancient Ways" cost="6" note="int."/>
+    <item name="Wsitiplaju's Bow" cost="6" note="int."/>
+    <item name="Attunement" cost="9" note="adv."/>
+    <item name="Ghost Shirt" cost="9" note="adv., wyld west"/>
+    <item name="Heart of Ice" cost="9" note="adv."/>
+    <item name="Invoke the Spirits of the Storm" cost="9" note="adv."/>
+    <item name="Spirits of Decay" cost="9" note="adv., wyld west"/>
+    <submenu name="Camp Gifts" link="Wendigo, Camp Gifts">
+  </menu>
+  <menu name="Wendigo, Camp Gifts" category="3" abc="no" autonote="yes" display="5">
+    <item name="Claw-to-Thumb" cost="3" note="basic sacred hoop"/>
+    <item name="Virgin Snow" cost="3" note="basic ghost dance"/>
+    <item name="Firewater's Quench" cost="6" note="int. sacred hoop"/>
+  </menu>
+  <menu name="Wendigo, Rites" category="3" abc="no" autonote="yes" display="5">
+    <item name="Rite of the Fire Dance" cost="2" note="basic caern"/>
+    <item name="Rite of Counting Coup" cost="2" note="basic punishment"/>
+    <item name="Rite of Remembrance" cost="2" note="basic death"/>
+    <item name="Rite of the Sin-Eater" cost="2" note="basic death"/>
+    <item name="Rite of the Sun Dance" cost="2" note="basic mystic"/>
+    <item name="Song of the Longest Night" cost="2" note="basic accord"/>
+    <item name="Black Blood of Gaia" cost="4" note="int. sacred hoop"/>
+    <item name="Rite of Deliverance" cost="4" note="int. mystic"/>
+    <item name="Rite of the Great Bear" cost="4" note="int. renown"/>
+    <item name="Rite of the Heavy Heart" cost="4" note="int. accord"/>
+    <item name="Rite of Nightshade" cost="4" note="int. death"/>
+    <item name="Twitch of the Idlak" cost="4" note="int. warpath"/>
+    <item name="Rite of Luna's Armor" cost="6" note="adv. mystic"/>
+    <item name="Rite of the Second Birth" cost="6" note="adv. accord"/>
+    <item name="Rite of the Vipers" cost="6" note="adv. renown"/>
+    <item name="Summon the Tupilaq" cost="6" note="adv. punishment"/>
+  </menu>
+</grapevinemenus>

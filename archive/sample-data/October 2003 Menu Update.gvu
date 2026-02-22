@@ -1,0 +1,252 @@
+<?xml version="1.0"?>
+<grapevinemenus version="3" size="12">
+  <description>
+    <![CDATA[Additions from Tribebook: Silver Fangs and the Guide to Anarchs.]]>
+  </description>
+  <menu name="Backgrounds, Vampire" category="2" abc="yes" required="yes" display="0">
+    <item name="Insight"/>
+  </menu>
+  <menu name="Camps, Werewolf" category="3" abc="yes" required="yes" display="0">
+    <item name="Austere Howl" note="DELETE"/>
+    <item name="Blood Red Crest" note="DELETE"/>
+    <item name="Conquering Claw" note="DELETE"/>
+    <item name="Crescent Moon" note="DELETE"/>
+    <item name="Gleaming Eye" note="DELETE"/>
+    <item name="Golden Sky" note="DELETE"/>
+    <item name="Grey Raptors"/>
+    <item name="Ice Pack" note="DELETE"/>
+    <item name="Masters of the Seal"/>
+    <item name="Moon Lodge" note="DELETE"/>
+    <item name="Renewalists" note="DELETE"/>
+    <item name="Renewal"/>
+    <item name="Silver Spiral" note="DELETE"/>
+    <item name="Sun Lodge" note="DELETE"/>
+    <item name="Unbreakable Hearth" note="DELETE"/>
+    <item name="Winter Snow" note="DELETE"/>
+    <item name="Wise Heart" note="DELETE"/>
+    <item name="Wyrmfoe" note="DELETE"/>
+  </menu>
+  <menu name="Clan" category="2" abc="no" required="yes" display="0">
+    <item name="Daughters of Cacophony"/>
+    <item name="Dhampir"/>
+  </menu>
+  <menu name="Disciplines" category="2" abc="no" autonote="yes" required="yes" display="5">
+    <submenu name="Bardo"/>
+    <submenu name="Combination" link="Disciplines, Combination"/>
+  </menu>
+  <menu name="Disciplines, Combination" category="2" abc="yes" display="4">
+    <item name="Aspect of Beast" cost="8" note="earth meld + forgetful mind">
+    <item name="Badger's Hide" cost="6" note="endurance + shape of the beast">
+    <item name="Call Upon the Blood" cost="9" note="drawing out the beast + telepathy">
+    <item name="Chaos Fold" cost="12" note="total insanity + conditioning">
+    <item name="Give 'Em Hell" cost="6" note="endurance/prowess + entrancement">
+    <item name="Guardian Vigil" cost="7" note="heightened senses + alacrity + endurance">
+    <item name="King of the Hill" cost="8" note="aegis + entrancement">
+    <item name="Memory Rift" cost="5" note="cloak of shadows + entrancement">
+    <item name="Retain the Quick Blood" cost="10" note="fleetness + taste of death">
+    <item name="Sensory Overload" cost="8" note="heightened senses + eyes of chaos">
+    <item name="Seventh Chinese Brother" cost="12" note="rapidity + personal armor">
+    <item name="Smiling Jack's Trick" cost="9" note="posession + cloak of shadows">
+    <item name="Suck It Up" cost="5" note="feral whispers + mist form">
+    <item name="Tenebrous Veil" cost="3" note="unseen presence + shadow play">
+  </menu>
+  <menu name="Features" category="3" abc="yes" required="yes" display="0">
+    <submenu name="House" link="House, Silver Fang"/>
+    <submenu name="Lodge"/>
+  </menu>
+  <menu name="Flaws, Vampire" category="2" abc="yes" negative="yes" required="yes" display="4">
+    <item name="Fifteenth Generation" cost="4"/>
+    <item name="Ravaging Years" cost="2"/>
+    <item name="Hemetic" cost="4"/>
+    <item name="Clan Weakness" cost="2"/>
+    <item name="Decrepitude" cost="3"/>
+    <item name="Fangless" cost="2"/>
+    <item name="Superstition" cost="1-7"/>
+    <item name="Fragile Bones" cost="5"/>
+  </menu>
+  <menu name="Flaws, Werewolf" category="3" abc="yes" negative="yes" required="yes" display="4">
+    <item name="Hubris" cost="3"/>
+    <item name="Harano Prone" cost="4"/>
+  </menu>
+  <menu name="House, Silver Fang" category="3" abc="yes" display="0">
+    <item name="Austere Howl"/>
+    <item name="Blood Red Crest"/>
+    <item name="Conquering Claw"/>
+    <item name="Crescent Moon"/>
+    <item name="Ice Pack"/>
+    <item name="Gleaming Eye"/>
+    <item name="Golden Sky"/>
+    <item name="Unbreakable Hearth"/>
+    <item name="Silver Spiral"/>
+    <item name="Winter Snow"/>
+    <item name="Wise Heart"/>
+    <item name="Wyrmfoe"/>
+  </menu>
+  <menu name="Lodge" category="3" abc="yes" display="0">
+    <item name="Moon"/>
+    <item name="Sun"/>
+  </menu>
+  <menu name="Merits, Vampire" category="2" abc="yes" required="yes" display="4">
+    <item name="Personal Masquerade" cost="3"/>
+    <item name="Perceive Vampires" cost="2 or 5"/>
+  </menu>
+  <menu name="Merits, Werewolf" category="3" abc="yes" required="yes" display="4">
+    <item name="Notable Heritage" cost="2"/>
+  </menu>
+  <menu name="Miscellaneous Traits" category="2" abc="no" required="yes" display="0">
+    <submenu name="Beast Traits"/>
+    <submenu name="Political Impulse"/>
+    <submenu name="Negative Status" link="Status, Negative"/>
+  </menu>
+  <menu name="Political Impulse" category="2" abc="yes" required="yes" display="0">
+    <item name="Constructionist"/>
+    <item name="Hardliner"/>
+    <item name="Militant"/>
+    <item name="Radical"/>
+    <item name="Reformer"/>
+    <item name="Sympathizer"/>
+  </menu>
+  <menu name="Presence" category="2" abc="no" autonote="yes" display="5">
+    <item name="Father Knows Best" cost="15" note="master"/>
+    <item name="Scourging the Instinct" cost="15" note="master"/>
+  </menu>
+  <menu name="Protean" category="2" abc="no" autonote="yes" display="5">
+    <item name="Shape Mastery" cost="12" note="elder"/>
+    <item name="Turnabout" cost="12" note="elder + earth control"/>
+  </menu>
+  <menu name="Quirk" category="3" abc="yes" display="0">
+    <item name="Ennui"/>
+    <item name="Fugue"/>
+    <item name="Hysteria"/>
+    <item name="Isolation"/>
+    <item name="Power Madness"/>
+    <item name="Regression"/>
+    <item name="Schizophrenia"/>
+  </menu>
+  <menu name="Rites, Werewolf, Tribal" category="3" abc="yes" autonote="yes" display="5">
+    <submenu name="Silver Fangs" link="Silver Fangs, Rites"/>
+  </menu>
+  <menu name="Rituals, Basic" category="2" abc="yes" display="0">
+    <item name="Banish Big Brother" cost="2" note="basic"/>
+    <item name="Flatline" cost="2" note="basic"/>
+    <item name="Iron Body" cost="2" note="basic"/>
+  </menu>
+  <menu name="Rituals, Intermediate" category="2" abc="yes" display="0">
+    <item name="Detect the Hidden Observer" cost="4" note="int."/>
+    <item name="Hell's Calling" cost="4" note="int."/>
+    <item name="Ward vs. Vitae" cost="4" note="int."/>
+  </menu>
+  <menu name="Sect" category="2" abc="yes" required="yes" display="0">
+    <item name="Autark" note="DELETE"/>
+    <item name="Autarch"/>
+    <item name="Mercenary"/>
+    <item name="Nihilist"/>
+  </menu>
+  <menu name="Silver Fangs" category="3" abc="no" autonote="yes" display="5">
+    <item name="Empathy" cost="3" note="basic"/>
+    <item name="Eye of the Falcon" cost="3" note="basic"/>
+    <item name="Falcon's Grasp" cost="3" note="basic"/>
+    <item name="Ice Dance" cost="3" note="basic"/>
+    <item name="Imposing Gaze" cost="3" note="basic, wyld west"/>
+    <item name="Lambent Flame" cost="3" note="basic"/>
+    <item name="Luna's Armor" cost="3" note="basic"/>
+    <item name="Paralyzing Stare" cost="3" note="basic"/>
+    <item name="Sense Wyrm" cost="3" note="basic"/>
+    <item name="Divine Regalia" cost="6" note="int., dark ages"/>
+    <item name="Foe of the Wyrm" cost="3" note="int., wyld west"/>
+    <item name="Mastery" cost="6" note="int."/>
+    <item name="Mindblock" cost="6" note="int."/>
+    <item name="Reason's Grasp" cost="6" note="int."/>
+    <item name="Roll Over" cost="6" note="int."/>
+    <item name="Silver Claws" cost="6" note="int."/>
+    <item name="Talons of Falcon" cost="6" note="int."/>
+    <item name="Wrath of Gaia" cost="6" note="int."/>
+    <item name="Gaia's Favor" cost="9" note="adv., wyld west"/>
+    <item name="Ignore Wound" cost="9" note="adv."/>
+    <item name="Luna's Avenger" cost="9" note="adv."/>
+    <item name="Luna's Might" cost="9" note="adv., wyld west"/>
+    <item name="Paws of the Newborn Cub" cost="9" note="adv."/>
+    <item name="Proud Warrior" cost="9" note="adv., wyld west"/>
+    <item name="Secret of Gaia" cost="9" note="adv."/>
+    <item name="Whelp the Insolent" cost="9" note="adv., wyld west"/>
+    <submenu name="House Gifts" link="Silver Fangs, House Gifts"/>
+    <submenu name="Lodge Gifts" link="Silver Fangs, Lodge Gifts"/>
+  </menu>
+  <menu name="Silver Fangs, House Gifts" category="3" abc="no" autonote="yes" display="5">
+    <item name="Osprey's Eye" cost="3" note="basic austere howl"/>
+    <item name="Osprey's Flight" cost="3" note="basic austere howl"/>
+    <item name="Austere Mind" cost="3" note="basic austere howl"/>
+    <item name="Merlin's Call" cost="3" note="basic blood red crest"/>
+    <item name="Burning Blade" cost="6" note="int. blood red crest"/>
+    <item name="Wind of Buzzard's Wings" cost="3" note="basic crescent moon"/>
+    <item name="Leshii's Boon" cost="6" note="int. crescent moon"/>
+    <item name="Harrier's View" cost="3" note="basic unbreakable hearth"/>
+    <item name="Hidden Meaning" cost="3" note="basic unbreakable hearth"/>
+    <item name="Locate Spirit Tutor" cost="3" note="basic wise heart"/>
+    <item name="Deep Roots" cost="3" note="basic wise heart"/>
+    <item name="Eagle's Beak" cost="3" note="basic wyrmfoe"/>
+    <item name="Hand Blade" cost="3" note="basic wyrmfoe"/>
+  </menu>
+  <menu name="Silver Fangs, Lodge Gifts" category="3" abc="no" autonote="yes" display="5">
+    <item name="Truce of Helios" cost="3" note="basic sun lodge"/>
+    <item name="Honor Pact" cost="6" note="int. sun lodge"/>
+    <item name="New Moon's Laughter" cost="3" note="basic moon lodge waxing"/>
+    <item name="Cresent Moon's Awareness" cost="3" note="basic moon lodge waxing"/>
+    <item name="Half Moon's Diplomacy" cost="6" note="int. moon lodge waxing"/>
+    <item name="Gibbous Moon's Understanding" cost="6" note="int. moon lodge waxing"/>
+    <item name="Full Moon's Wrath" cost="9" note="adv. moon lodge waxing"/>
+    <item name="Full Moon Cleansing" cost="3" note="basic moon lodge waning"/>
+    <item name="Gibbous Moon Song" cost="3" note="basic moon lodge waning"/>
+    <item name="Half Moon Mnemonics" cost="6" note="int. moon lodge waning"/>
+    <item name="Crescent Moon Fata" cost="6" note="int. moon lodge waning"/>
+    <item name="New Moon Legerdemain" cost="9" note="adv. moon lodge waning"/>
+  </menu>
+  <menu name="Silver Fangs, Rites" category="3" abc="no" autonote="yes" display="5">
+    <item name="Rite of Breeding" cost="2" note="basic"/>
+    <item name="Rite of the Honorable Oath" cost="2" note="basic"/>
+    <item name="Rite of Kingship" cost="4" note="int."/>
+    <item name="Rite of the Loyal Pack" cost="4" note="int."/>
+    <item name="Rite of the Omega Wolf" cost="4" note="int."/>
+    <item name="Walking with the Dead" cost="4" note="int."/>
+  </menu>
+  <menu name="Status" category="2" abc="yes" required="yes" display="0">
+    <item name="Advocate"/>
+    <item name="Believer"/>
+    <item name="Champion"/>
+    <item name="Preacher"/>
+    <item name="Bond"/>
+    <item name="Bond Girl"/>
+    <item name="Committed"/>
+    <item name="Hardcore"/>
+    <item name="Loaded"/>
+    <item name="Hook-up"/>
+    <item name="Connected"/>
+    <item name="Marked"/>
+    <item name="Soldier"/>
+    <item name="Warrior"/>
+    <item name="Veteran"/>
+    <item name="Lifer"/>
+    <item name="Tested"/>
+  </menu>
+  <menu name="Status, Negative" category="2" abc="yes" display="0">
+    <item name="Burnt Out"/>
+    <item name="Casualty"/>
+    <item name="Cherry"/>
+    <item name="Cocky"/>
+    <item name="Defeated"/>
+    <item name="Overzealous"/>
+    <item name="Thug"/>
+    <item name="Unenlightened"/>
+    <item name="Unreliable"/>
+    <item name="Vain"/>
+  </menu>
+  <menu name="Totems" category="3" abc="yes" required="yes" display="0">
+    <item name="Buzzard"/>
+    <item name="Harrier"/>
+    <item name="Hawk"/>
+    <item name="Heron"/>
+    <item name="Osprey"/>
+    <item name="Peregrine Falcon"/>
+    <item name="Wyvern"/>
+  </menu>
+</grapevinemenus>
