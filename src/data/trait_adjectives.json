@@ -1,46 +1,36 @@
 {
     "physical": [
-        "Brawny", "Enduring", "Rugged", "Steady", "Tough",
-        "Brutish", "Energetic", "Stalwart", "Strapping", "Tenacious",
-        "Athletic", "Agile", "Dexterous", "Resilient", "Vigorous",
-        "Lithe", "Nimble", "Robust", "Swift", "Tireless",
-        "Commanding", "Powerful", "Quick", "Relentless", "Mighty"
+        "Agile", "Brawny", "Brutal", "Dexterous", "Enduring",
+        "Energetic", "Ferocious", "Graceful", "Lithe", "Nimble",
+        "Quick", "Resilient", "Robust", "Rugged", "Stalwart",
+        "Steady", "Tenacious", "Tireless", "Tough", "Vigorous",
+        "Wiry"
     ],
     "social": [
-        "Charming", "Eloquent", "Expressive", "Persuasive", "Sensual",
-        "Alluring", "Graceful", "Magnetic", "Suave", "Tactful",
-        "Beguiling", "Charismatic", "Dignified", "Elegant", "Seductive",
-        "Captivating", "Dazzling", "Entrancing", "Fascinating", "Mesmerizing",
-        "Bewitching", "Compelling", "Enchanting", "Irresistible", "Magnificent"
+        "Alluring", "Beguiling", "Charismatic", "Charming", "Commanding",
+        "Dignified", "Diplomatic", "Elegant", "Eloquent", "Empathetic",
+        "Expressive", "Friendly", "Genial", "Gorgeous", "Ingratiating",
+        "Intimidating", "Magnetic", "Persuasive", "Seductive", "Witty"
     ],
     "mental": [
-        "Attentive", "Clever", "Discerning", "Insightful", "Knowledgeable",
-        "Analytical", "Astute", "Cunning", "Focused", "Intuitive",
-        "Brilliant", "Erudite", "Perceptive", "Rational", "Shrewd",
-        "Calculating", "Enlightened", "Ingenious", "Learned", "Visionary",
-        "Creative", "Inspired", "Mastermind", "Sagacious", "Wise"
+        "Astute", "Attentive", "Clever", "Creative", "Cunning",
+        "Dedicated", "Determined", "Discerning", "Disciplined", "Insightful",
+        "Intuitive", "Knowledgeable", "Observant", "Patient", "Rational",
+        "Reflective", "Shrewd", "Vigilant", "Wily", "Wise"
     ],
     "negative": {
         "physical": [
-            "Clumsy", "Frail", "Lethargic", "Sluggish", "Weak",
-            "Arthritic", "Flabby", "Feeble", "Sickly", "Uncoordinated",
-            "Decrepit", "Haggard", "Infirm", "Sore", "Wimpy",
-            "Crippled", "Exhausted", "Immobile", "Shattered", "Withered",
-            "Broken", "Incapacitated", "Paralyzed", "Wasted", "Wrecked"
+            "Clumsy", "Cowardly", "Decrepit", "Delicate", "Docile",
+            "Flabby", "Lame", "Lethargic", "Puny", "Sickly"
         ],
         "social": [
-            "Awkward", "Coarse", "Dull", "Irritating", "Shy",
-            "Abrasive", "Crass", "Offensive", "Unpleasant", "Vulgar",
-            "Boorish", "Callous", "Obnoxious", "Repugnant", "Tactless",
-            "Disgusting", "Loathsome", "Repellent", "Repulsive", "Vile",
-            "Abhorrent", "Despicable", "Intolerable", "Revolting", "Unbearable"
+            "Bestial", "Callous", "Condescending", "Dull", "Feral",
+            "Naive", "Obnoxious", "Repugnant", "Shy", "Tactless",
+            "Untrustworthy"
         ],
         "mental": [
-            "Confused", "Distracted", "Forgetful", "Slow", "Unintelligent",
-            "Delusional", "Dim", "Ignorant", "Shortsighted", "Simpleminded",
-            "Foolish", "Irrational", "Muddled", "Oblivious", "Vacant",
-            "Addled", "Bewildered", "Dense", "Imbecilic", "Witless",
-            "Brainless", "Feeble-minded", "Moronic", "Senseless", "Thoughtless"
+            "Forgetful", "Gullible", "Ignorant", "Impatient", "Oblivious",
+            "Predictable", "Shortsighted", "Submissive", "Violent", "Witless"
         ]
     },
     "talents": {
