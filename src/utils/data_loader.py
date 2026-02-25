@@ -1027,61 +1027,53 @@ def load_character(character_id: int) -> Optional[Any]:
             session.close()
 
 def prepare_character_for_ui(character: Any) -> Any:
-    """
-    Prepare a character for use in the UI by ensuring all required data is loaded.
-    This helps prevent lazy loading issues when the object is detached from the session.
-    
-    Args:
-        character: Character object to prepare
-        
-    Returns:
-        Prepared character object
-    """
+    """Prepare a character for use in the UI by ensuring all required data is loaded."""
     if not character:
         return None
-        
-    # Create a new session and attach the character to it
+
     session = get_session()
     try:
-        # Add the character to the session
-        session.add(character)
-        
+        # Use merge() instead of add() to handle objects already attached to other sessions
+        character = session.merge(character)
+
         # Force access to key attributes to ensure they're loaded
         _ = character.id
         _ = character.name
-        _ = character.player
+        _ = character.player_name
         _ = character.nature
         _ = character.demeanor
         _ = character.type
-        
+
         # Access type-specific attributes
         from src.core.models import Vampire
         if isinstance(character, Vampire):
             _ = character.clan
             _ = character.generation
             _ = character.sect
+            _ = character.sire
             _ = character.conscience
             _ = character.self_control
             _ = character.courage
             _ = character.path
             _ = character.willpower
             _ = character.blood
-            
+
         # Force load all collection attributes
         if hasattr(character, 'traits'):
-            traits = list(character.traits)  # Force loading full collection
-            
+            _ = list(character.traits)
+
         if hasattr(character, 'larp_traits'):
-            larp_traits = list(character.larp_traits)  # Force loading full collection
-            # Also load each larp_trait's categories
+            larp_traits = list(character.larp_traits)
             for trait in larp_traits:
                 if hasattr(trait, 'categories'):
-                    _ = list(trait.categories)  # Force loading categories
-            
+                    _ = list(trait.categories)
+
+        # Expunge so it can be used outside this session
+        session.expunge(character)
         return character
-        
+
     except Exception as e:
-        print(f"Error preparing character for UI: {e}")
+        logger.error(f"Error preparing character for UI: {e}")
         return character
     finally:
         session.close() 
