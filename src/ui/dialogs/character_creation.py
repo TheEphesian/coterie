@@ -83,7 +83,31 @@ class CharacterCreationDialog(QDialog):
         
         # Create advantage sections
         self._create_advantage_sections(advantages_scroll_layout)
-        
+
+        # Backgrounds tab
+        backgrounds_tab = QWidget()
+        self.tabs.addTab(backgrounds_tab, "Backgrounds")
+        backgrounds_scroll = QScrollArea()
+        backgrounds_scroll.setWidgetResizable(True)
+        backgrounds_layout_tab = QVBoxLayout(backgrounds_tab)
+        backgrounds_layout_tab.addWidget(backgrounds_scroll)
+        backgrounds_content = QWidget()
+        backgrounds_scroll_layout = QVBoxLayout(backgrounds_content)
+        backgrounds_scroll.setWidget(backgrounds_content)
+        self._create_backgrounds_section(backgrounds_scroll_layout)
+
+        # Merits & Flaws tab
+        merits_flaws_tab = QWidget()
+        self.tabs.addTab(merits_flaws_tab, "Merits & Flaws")
+        merits_flaws_scroll = QScrollArea()
+        merits_flaws_scroll.setWidgetResizable(True)
+        merits_flaws_layout_tab = QVBoxLayout(merits_flaws_tab)
+        merits_flaws_layout_tab.addWidget(merits_flaws_scroll)
+        merits_flaws_content = QWidget()
+        merits_flaws_scroll_layout = QVBoxLayout(merits_flaws_content)
+        merits_flaws_scroll.setWidget(merits_flaws_content)
+        self._create_merits_flaws_section(merits_flaws_scroll_layout)
+
         # Dialog buttons
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | 
@@ -204,38 +228,22 @@ class CharacterCreationDialog(QDialog):
         abilities_group = QGroupBox("Abilities")
         abilities_layout = QVBoxLayout(abilities_group)
         parent_layout.addWidget(abilities_group)
-        
-        # Instruction label
+
         abilities_instr = QLabel(
-            "Select your character's abilities. These represent what your character knows how to do."
+            "Select your character's abilities. Each ability can be taken multiple times "
+            "to represent higher levels of expertise."
         )
         abilities_instr.setWordWrap(True)
         abilities_layout.addWidget(abilities_instr)
-        
-        # Create LARP trait category widget for abilities
-        # Initialize with empty categories
-        self.abilities = LarpTraitCategoryWidget(
-            category_name="Abilities",
-            trait_categories={
-                "Talents": [],
-                "Skills": [],
-                "Knowledges": []
-            }
-        )
+
+        # Single flat list for all abilities (MET doesn't split into Talents/Skills/Knowledges)
+        self.abilities = LarpTraitWidget("Abilities")
         abilities_layout.addWidget(self.abilities)
-        
-        # Add some helper buttons for quick ability selection
-        talents_button = QPushButton("Add Common Talents")
-        talents_button.clicked.connect(lambda: self._add_common_abilities("talents"))
-        abilities_layout.addWidget(talents_button)
-        
-        skills_button = QPushButton("Add Common Skills")
-        skills_button.clicked.connect(lambda: self._add_common_abilities("skills"))
-        abilities_layout.addWidget(skills_button)
-        
-        knowledges_button = QPushButton("Add Common Knowledges")
-        knowledges_button.clicked.connect(lambda: self._add_common_abilities("knowledges"))
-        abilities_layout.addWidget(knowledges_button)
+
+        # Single button for common abilities
+        abilities_button = QPushButton("Add Common Abilities")
+        abilities_button.clicked.connect(self._add_common_abilities_flat)
+        abilities_layout.addWidget(abilities_button)
         
     def _create_advantage_sections(self, parent_layout: QVBoxLayout) -> None:
         """Create the advantage sections (disciplines, backgrounds, etc.).
@@ -264,27 +272,6 @@ class CharacterCreationDialog(QDialog):
         suggest_button.clicked.connect(self._suggest_clan_disciplines)
         disciplines_layout.addWidget(suggest_button)
         
-        # Backgrounds section
-        backgrounds_group = QGroupBox("Backgrounds")
-        backgrounds_layout = QVBoxLayout(backgrounds_group)
-        parent_layout.addWidget(backgrounds_group)
-        
-        # Instruction label
-        backgrounds_instr = QLabel(
-            "Add your character's backgrounds. These represent social connections and resources."
-        )
-        backgrounds_instr.setWordWrap(True)
-        backgrounds_layout.addWidget(backgrounds_instr)
-        
-        # Create LARP trait widget for backgrounds
-        self.backgrounds = LarpTraitWidget("Backgrounds")
-        backgrounds_layout.addWidget(self.backgrounds)
-        
-        # Add some common backgrounds
-        suggest_bg_button = QPushButton("Add Common Backgrounds")
-        suggest_bg_button.clicked.connect(self._add_common_backgrounds)
-        backgrounds_layout.addWidget(suggest_bg_button)
-        
     def _on_type_changed(self, index: int) -> None:
         """Handle character type selection changes.
         
@@ -297,41 +284,66 @@ class CharacterCreationDialog(QDialog):
         # Enable/disable vampire-specific tabs or sections
         # For future expansion with other character types
         
-    def _add_common_abilities(self, ability_type: str) -> None:
-        """Add common abilities of a specific type.
+    def _add_common_abilities_flat(self) -> None:
+        """Add common MET abilities from the Laws of the Night rulebook."""
+        common_abilities = [
+            "Academics", "Alertness", "Animal Ken", "Athletics", "Brawl",
+            "Computer", "Crafts", "Dodge", "Drive", "Empathy",
+            "Etiquette", "Expression", "Finance", "Firearms",
+            "Intimidation", "Investigation", "Law", "Leadership",
+            "Linguistics", "Medicine", "Melee", "Occult",
+            "Performance", "Politics", "Science", "Security",
+            "Stealth", "Streetwise", "Subterfuge", "Survival"
+        ]
+        self.abilities.set_traits(common_abilities)
         
-        Args:
-            ability_type: Type of abilities to add (talents, skills, knowledges)
-        """
-        trait_categories = self.abilities.get_category_traits()
-        
-        if ability_type == "talents":
-            # Add common talents
-            common_talents = [
-                "Alert", "Athletic", "Brawny", "Charming", "Creative",
-                "Empathic", "Expressive", "Intimidating", "Persuasive", "Streetwise"
-            ]
-            trait_categories["Talents"] = common_talents
-            
-        elif ability_type == "skills":
-            # Add common skills
-            common_skills = [
-                "Animal Ken", "Crafty", "Driving", "Etiquette", "Firearms",
-                "Melee", "Performance", "Stealthy", "Survival", "Technical"
-            ]
-            trait_categories["Skills"] = common_skills
-            
-        elif ability_type == "knowledges":
-            # Add common knowledges
-            common_knowledges = [
-                "Academic", "Computer", "Finance", "Investigation", "Law",
-                "Linguistics", "Medicine", "Occult", "Politics", "Science"
-            ]
-            trait_categories["Knowledges"] = common_knowledges
-            
-        # Update the widget
-        self.abilities.set_category_traits(trait_categories)
-        
+    def _create_backgrounds_section(self, parent_layout: QVBoxLayout) -> None:
+        """Create the backgrounds section."""
+        backgrounds_group = QGroupBox("Backgrounds")
+        bg_layout = QVBoxLayout(backgrounds_group)
+        parent_layout.addWidget(backgrounds_group)
+
+        backgrounds_instr = QLabel(
+            "Backgrounds represent social connections and resources. "
+            "You may take five Background Traits."
+        )
+        backgrounds_instr.setWordWrap(True)
+        bg_layout.addWidget(backgrounds_instr)
+
+        self.backgrounds = LarpTraitWidget("Backgrounds")
+        bg_layout.addWidget(self.backgrounds)
+
+        suggest_bg_button = QPushButton("Add Common Backgrounds")
+        suggest_bg_button.clicked.connect(self._add_common_backgrounds)
+        bg_layout.addWidget(suggest_bg_button)
+
+    def _create_merits_flaws_section(self, parent_layout: QVBoxLayout) -> None:
+        """Create the merits and flaws section."""
+        merits_group = QGroupBox("Merits")
+        merits_layout = QVBoxLayout(merits_group)
+        parent_layout.addWidget(merits_group)
+
+        merits_instr = QLabel("Merits are special advantages purchased with Free Traits.")
+        merits_instr.setWordWrap(True)
+        merits_layout.addWidget(merits_instr)
+
+        self.merits = LarpTraitWidget("Merits")
+        merits_layout.addWidget(self.merits)
+
+        flaws_group = QGroupBox("Flaws")
+        flaws_layout = QVBoxLayout(flaws_group)
+        parent_layout.addWidget(flaws_group)
+
+        flaws_instr = QLabel(
+            "Flaws represent specific deficiencies. Each Flaw grants additional Free Traits. "
+            "A character may total up to seven Traits of Flaws."
+        )
+        flaws_instr.setWordWrap(True)
+        flaws_layout.addWidget(flaws_instr)
+
+        self.flaws = LarpTraitWidget("Flaws")
+        flaws_layout.addWidget(self.flaws)
+
     def _suggest_clan_disciplines(self) -> None:
         """Suggest disciplines based on clan selection."""
         clan = self.clan.currentText()
@@ -420,14 +432,14 @@ class CharacterCreationDialog(QDialog):
         for category, traits in attribute_traits.items():
             larp_traits[category.lower()] = traits
         
-        # Add abilities
-        ability_traits = self.abilities.get_category_traits()
-        for category, traits in ability_traits.items():
-            larp_traits[category.lower()] = traits
+        # Add abilities (flat list in MET)
+        larp_traits["abilities"] = self.abilities.get_traits()
         
         # Add disciplines and backgrounds
         larp_traits["disciplines"] = self.disciplines.get_traits()
         larp_traits["backgrounds"] = self.backgrounds.get_traits()
+        larp_traits["merits"] = self.merits.get_traits()
+        larp_traits["flaws"] = self.flaws.get_traits()
         
         # Add to data
         data["larp_traits"] = larp_traits
