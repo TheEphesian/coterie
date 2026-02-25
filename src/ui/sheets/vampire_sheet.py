@@ -261,7 +261,8 @@ class VampireSheet(QWidget):
             
             # Add chronicles to list
             for chronicle in chronicles:
-                item = QListWidgetItem(f"{chronicle.name} (HST: {chronicle.narrator})")
+                narrator_display = chronicle.narrator or "No HST"
+                item = QListWidgetItem(f"{chronicle.name} (HST: {narrator_display})")
                 item.setData(Qt.ItemDataRole.UserRole, chronicle.id)
                 chronicle_list.addItem(item)
                 

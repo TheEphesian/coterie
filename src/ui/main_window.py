@@ -295,7 +295,8 @@ class MainWindow(QMainWindow):
                 
                 # Add chronicles to the list
                 for chronicle in chronicles:
-                    item = QListWidgetItem(f"{chronicle.name} (Narrator: {chronicle.narrator})")
+                    narrator_display = chronicle.narrator or "No HST"
+                    item = QListWidgetItem(f"{chronicle.name} (HST: {narrator_display})")
                     item.setData(Qt.ItemDataRole.UserRole, chronicle.id)
                     
                     # Make active chronicle bold
@@ -329,38 +330,41 @@ class MainWindow(QMainWindow):
         dialog.exec()
         
     def _create_chronicle(self, data: Dict[str, Any]) -> None:
-        """Create a new chronicle in the database.
-        
-        Args:
-            data: Dictionary containing chronicle data
-        """
+        """Create a new chronicle in the database."""
         try:
             session = get_session()
-            
-            # Create a new Chronicle object
+
+            from src.core.models.player import Player
+
+            # Find or create a Player record for the HST
+            hst_name = data.get("narrator", "").strip()
+            storyteller = None
+            if hst_name:
+                storyteller = session.query(Player).filter(Player.name == hst_name).first()
+                if not storyteller:
+                    storyteller = Player(name=hst_name, status="Active")
+                    session.add(storyteller)
+                    session.flush()
+
             chronicle = Chronicle(
                 name=data["name"],
-                narrator=data["narrator"],
+                narrator=hst_name,
                 description=data.get("description", ""),
                 start_date=data["start_date"],
-                last_modified=data["last_modified"],
-                is_active=data["is_active"]
+                last_modified=data.get("last_modified"),
+                is_active=data.get("is_active", True),
+                storyteller_id=storyteller.id if storyteller else None
             )
-            
-            # Add to database
+
             session.add(chronicle)
             session.commit()
-            
-            # Set as active chronicle
+
             self.active_chronicle = chronicle
-            
-            # Refresh the chronicle list
             self._refresh_chronicles()
-            
-            # Show success message
+
             self.status_bar.showMessage(f"Created new chronicle: {data['name']}")
             logger.info(f"Created new chronicle: {data['name']}")
-            
+
         except Exception as e:
             error_msg = f"Failed to create chronicle: {str(e)}"
             logger.error(error_msg)
