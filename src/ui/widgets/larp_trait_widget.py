@@ -74,26 +74,15 @@ class LarpTraitWidget(QWidget):
     def _add_trait(self):
         """Add a new trait through user input."""
         trait, ok = QInputDialog.getText(
-            self, 
-            f"Add {self.trait_name} Trait", 
+            self,
+            f"Add {self.trait_name} Trait",
             "Enter new trait adjective:"
         )
-        
+
         if ok and trait:
-            # Check for duplicates
-            if trait in self.traits:
-                QMessageBox.warning(
-                    self, 
-                    "Duplicate Trait", 
-                    f"The trait '{trait}' already exists in this category."
-                )
-                return
-            
-            # Add to internal list and UI
+            # Add to internal list and UI (duplicates allowed for multiple levels)
             self.traits.append(trait)
             self.trait_list_widget.addItem(QListWidgetItem(trait))
-            
-            # Emit signal for trait change
             self.traitChanged.emit(self.trait_name, self.traits)
     
     def _remove_selected_trait(self):
