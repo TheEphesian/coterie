@@ -117,6 +117,37 @@ class TraitConverter:
         return random.sample(adjectives, min(count, len(adjectives)))
     
     @classmethod
+    def dot_rating_to_adjectives(cls, trait_name: str, rating: int, category: str) -> List[str]:
+        """Convert a dot rating to a list of adjective traits.
+
+        Used for Grapevine import: converts numeric ratings (e.g., Athletics 3)
+        to MET adjective traits (e.g., ["Athletic", "Agile", "Nimble"]).
+
+        Args:
+            trait_name: The trait name (e.g., "athletics", "brawl")
+            rating: The numeric rating (1-5)
+            category: The trait category (physical, social, mental, talents, skills, knowledges)
+
+        Returns:
+            List of adjective traits matching the rating count
+        """
+        # For attribute categories, pull directly from the category pool
+        if category in ("physical", "social", "mental"):
+            adjectives = cls.get_trait_adjectives(category)
+            if adjectives:
+                return adjectives[:min(rating, len(adjectives))]
+            return [f"{trait_name.title()} x{i+1}" for i in range(rating)]
+
+        # For ability categories, try to find ability-specific adjectives
+        adjectives = cls.get_ability_trait_adjectives(category, trait_name)
+        if adjectives:
+            return adjectives[:min(rating, len(adjectives))]
+
+        # Fallback: generate numbered traits
+        display_name = trait_name.replace("_", " ").title()
+        return [f"{display_name} x{i+1}" for i in range(rating)]
+
+    @classmethod
     def format_trait_for_display(cls, trait: str, is_negative: bool = False, 
                                 is_spent: bool = False) -> str:
         """
