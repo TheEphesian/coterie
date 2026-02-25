@@ -9,3 +9,12 @@ The advantages tab should just be disciplines. We should then split out other ta
 When pressing OK on character creation "Viewing Character Characters is not yet implemented"
 
 in top menu, selecting STAFF MANAGER exits the program. 
+Failed to create chronicle: 'narrator' is an invalid keyword argument for Chronicle
+Error preparing character for UI: Object '<Character at 0x749c7825b0e0>' is already attached to session '4' (this is '5')
+Traceback (most recent call last):
+  File /mnt/d/TheEdge/KingmakerTM/Coterie/src/ui/main_window.py, line 900, in _show_staff_manager
+    from src.ui.dialogs.staff_manager import StaffManagerDialog
+  File /mnt/d/TheEdge/KingmakerTM/Coterie/src/ui/dialogs/staff_manager.py, line 11, in <module>
+    from ...models.chronicle import Chronicle
+ModuleNotFoundError: No module named 'src.models'
+Aborted (core dumped)
