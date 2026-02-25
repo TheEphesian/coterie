@@ -905,7 +905,7 @@ def create_vampire_from_dict(character_data: Dict) -> Vampire:
         # Create a new Vampire character with basic attributes
         vampire = Vampire(
             name=character_data.get('name', 'Unknown'),
-            player=character_data.get('player', ''),
+            player_name=character_data.get('player', ''),
             nature=character_data.get('nature', ''),
             demeanor=character_data.get('demeanor', ''),
             clan=character_data.get('clan', ''),
