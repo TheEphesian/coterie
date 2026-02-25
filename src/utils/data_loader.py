@@ -1043,13 +1043,13 @@ def prepare_character_for_ui(character: Any) -> Any:
     # Create a new session and attach the character to it
     session = get_session()
     try:
-        # Add the character to the session
-        session.add(character)
+        # Use merge instead of add to handle already-attached objects gracefully
+        character = session.merge(character)
         
         # Force access to key attributes to ensure they're loaded
         _ = character.id
         _ = character.name
-        _ = character.player
+        _ = character.player_name
         _ = character.nature
         _ = character.demeanor
         _ = character.type

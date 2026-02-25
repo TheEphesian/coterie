@@ -8,8 +8,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from sqlalchemy.orm import Session
-from ...models.chronicle import Chronicle
-from ...models.staff import Staff
+from src.core.models.chronicle import Chronicle
+from src.core.models.staff import Staff
 
 class StaffManagerDialog(QDialog):
     """Dialog for managing staff members."""

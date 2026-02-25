@@ -80,16 +80,7 @@ class LarpTraitWidget(QWidget):
         )
         
         if ok and trait:
-            # Check for duplicates
-            if trait in self.traits:
-                QMessageBox.warning(
-                    self, 
-                    "Duplicate Trait", 
-                    f"The trait '{trait}' already exists in this category."
-                )
-                return
-            
-            # Add to internal list and UI
+            # Allow multiple levels of the same trait (e.g. Discipline x3)
             self.traits.append(trait)
             self.trait_list_widget.addItem(QListWidgetItem(trait))
             
@@ -244,8 +235,7 @@ class LarpTraitWidget(QWidget):
             traits (list): Traits to add
         """
         for trait in traits:
-            if trait not in self.traits:
-                self.traits.append(trait)
+            self.traits.append(trait)
         
         self._populate_traits()
         self.traitChanged.emit(self.trait_name, self.traits)

@@ -306,25 +306,25 @@ class CharacterCreationDialog(QDialog):
         trait_categories = self.abilities.get_category_traits()
         
         if ability_type == "talents":
-            # Add common talents
+            # MET Talents (Mind's Eye Theater)
             common_talents = [
-                "Alert", "Athletic", "Brawny", "Charming", "Creative",
-                "Empathic", "Expressive", "Intimidating", "Persuasive", "Streetwise"
+                "Alert", "Athletics", "Brawl", "Dodge", "Empathy",
+                "Expression", "Intimidation", "Leadership", "Streetwise", "Subterfuge"
             ]
             trait_categories["Talents"] = common_talents
-            
+
         elif ability_type == "skills":
-            # Add common skills
+            # MET Skills (Mind's Eye Theater)
             common_skills = [
-                "Animal Ken", "Crafty", "Driving", "Etiquette", "Firearms",
-                "Melee", "Performance", "Stealthy", "Survival", "Technical"
+                "Animal Ken", "Drive", "Etiquette", "Firearms", "Melee",
+                "Performance", "Security", "Stealth", "Survival", "Technology"
             ]
             trait_categories["Skills"] = common_skills
-            
+
         elif ability_type == "knowledges":
-            # Add common knowledges
+            # MET Knowledges (Mind's Eye Theater)
             common_knowledges = [
-                "Academic", "Computer", "Finance", "Investigation", "Law",
+                "Academics", "Computer", "Finance", "Investigation", "Law",
                 "Linguistics", "Medicine", "Occult", "Politics", "Science"
             ]
             trait_categories["Knowledges"] = common_knowledges

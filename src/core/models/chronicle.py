@@ -2,7 +2,7 @@
 
 from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
-from sqlalchemy import String, ForeignKey, Table, Column
+from sqlalchemy import String, ForeignKey, Table, Column, Boolean, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models.base import Base
@@ -25,23 +25,26 @@ class Chronicle(Base):
     """A chronicle/campaign in which characters participate."""
     __tablename__ = "chronicles"
     __table_args__ = {'extend_existing': True}
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
-    description: Mapped[str] = mapped_column(String)
-    start_date: Mapped[datetime] = mapped_column()
-    end_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)
-    
-    # Storyteller relationship
-    storyteller_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
-    storyteller: Mapped["Player"] = relationship("Player", back_populates="chronicles_run")
-    
+    narrator: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, default="")
+    description: Mapped[Optional[str]] = mapped_column(String, nullable=True, default="")
+    start_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    end_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    last_modified: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    # Optional storyteller relationship (player who runs the chronicle)
+    storyteller_id: Mapped[Optional[int]] = mapped_column(ForeignKey("players.id"), nullable=True)
+    storyteller: Mapped[Optional["Player"]] = relationship("Player", back_populates="chronicles_run")
+
     # Characters in this chronicle
     characters: Mapped[List["Character"]] = relationship("Character", back_populates="chronicle")
-    
+
     # Game sessions
     sessions: Mapped[List["GameSession"]] = relationship("GameSession", back_populates="chronicle")
-    
+
     # Staff members
     staff: Mapped[List["Staff"]] = relationship("Staff", back_populates="chronicle")
 
