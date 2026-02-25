@@ -465,10 +465,27 @@ class MainWindow(QMainWindow):
         """Create a new character from the provided data."""
         with get_session() as session:
             # Create the character based on type
-            if data["type"].lower() == "vampire":
-                character = Vampire()
+            if "vampire" in data["type"].lower():
+                character = Vampire(
+                    clan=data.get("clan", ""),
+                    generation=data.get("generation", 13),
+                    sect=data.get("sect", ""),
+                    sire="",
+                    path="Humanity",
+                    path_traits=0,
+                    temp_path_traits=0,
+                    conscience=0,
+                    temp_conscience=0,
+                    self_control=0,
+                    temp_self_control=0,
+                    courage=0,
+                    temp_courage=0,
+                    blood=0,
+                    temp_blood=0,
+                )
             else:
                 character = Character()
+                character.type = data["type"].split(":")[0].lower().strip()
                 
             # Set basic attributes
             character.name = data["name"]
