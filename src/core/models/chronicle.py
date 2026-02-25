@@ -2,7 +2,7 @@
 
 from typing import List, Optional, TYPE_CHECKING
 from datetime import datetime
-from sqlalchemy import String, ForeignKey, Table, Column
+from sqlalchemy import String, ForeignKey, Table, Column, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models.base import Base
@@ -31,10 +31,15 @@ class Chronicle(Base):
     description: Mapped[str] = mapped_column(String)
     start_date: Mapped[datetime] = mapped_column()
     end_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)
-    
+
+    # HST/Narrator name (text field for quick access)
+    narrator: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    last_modified: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
     # Storyteller relationship
-    storyteller_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
-    storyteller: Mapped["Player"] = relationship("Player", back_populates="chronicles_run")
+    storyteller_id: Mapped[Optional[int]] = mapped_column(ForeignKey("players.id"), nullable=True)
+    storyteller: Mapped[Optional["Player"]] = relationship("Player", back_populates="chronicles_run")
     
     # Characters in this chronicle
     characters: Mapped[List["Character"]] = relationship("Character", back_populates="chronicle")
