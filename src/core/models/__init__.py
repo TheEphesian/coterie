@@ -11,6 +11,7 @@ from .larp_trait import LarpTrait, TraitCategory
 from .vampire import Vampire, Discipline, Ritual, Bond
 from .menu import MenuCategory, MenuItem
 from .staff import Staff
+from .power import PowerCategory, Power, PowerWriteup, ChronicleWriteupPreference
 
 # Extended models (used by API)
 from .game import Game
@@ -39,4 +40,8 @@ __all__ = [
     "Rumor",
     "Boon",
     "BoonHistory",
+    "PowerCategory",
+    "Power",
+    "PowerWriteup",
+    "ChronicleWriteupPreference",
 ]
