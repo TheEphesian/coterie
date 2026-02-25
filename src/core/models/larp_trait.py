@@ -5,7 +5,7 @@ where traits are represented by adjectives rather than numeric values.
 """
 
 from typing import List, Optional, Set, TYPE_CHECKING
-from sqlalchemy import String, Integer, ForeignKey, Table, Column
+from sqlalchemy import String, Integer, Boolean, ForeignKey, Table, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models.base import Base
@@ -55,7 +55,13 @@ class LarpTrait(Base):
     name: Mapped[str] = mapped_column(String(100))
     display_name: Mapped[str] = mapped_column(String(100))
     description: Mapped[str] = mapped_column(String)
-    
+
+    # Trait state flags
+    is_negative: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_spent: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_temporary: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_custom: Mapped[bool] = mapped_column(Boolean, default=False)
+
     # Character relationship
     character_id: Mapped[int] = mapped_column(ForeignKey("characters.id"))
     character: Mapped["Character"] = relationship("Character", back_populates="larp_traits")
