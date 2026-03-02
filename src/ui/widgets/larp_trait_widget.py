@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
     QPushButton, QListWidget, QListWidgetItem, QMenu,
-    QInputDialog, QMessageBox
+    QInputDialog, QMessageBox, QComboBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QPoint
 from PyQt6.QtGui import QAction
@@ -28,9 +28,67 @@ class LarpTraitWidget(QWidget):
         super().__init__(parent)
         self.trait_name = trait_name
         self.traits = trait_list or []
+        self.available_traits = []
         
         self._setup_ui()
         self._populate_traits()
+        
+    def set_available_traits(self, traits: list) -> None:
+        """Set the available traits for selection.
+        
+        Args:
+            traits: List of available trait names
+        """
+        self.available_traits = traits
+        if traits:
+            self.add_btn.setMenu(self._create_add_menu())
+        else:
+            self.add_btn.setMenu(None)
+    
+    def _create_add_menu(self) -> QMenu:
+        """Create a menu with available traits for adding."""
+        menu = QMenu(self)
+        
+        if self.available_traits:
+            for trait in self.available_traits:
+                action = QAction(trait, self)
+                action.triggered.connect(lambda checked, t=trait: self._add_trait_from_menu(t))
+                menu.addAction(action)
+            menu.addSeparator()
+        
+        custom_action = QAction("Enter Custom...", self)
+        custom_action.triggered.connect(self._add_custom_trait)
+        menu.addAction(custom_action)
+        
+        return menu
+    
+    def _add_trait_from_menu(self, trait: str) -> None:
+        """Add a trait from the menu selection."""
+        self._add_trait_with_name(trait)
+    
+    def _add_custom_trait(self) -> None:
+        """Add a custom trait through user input."""
+        trait, ok = QInputDialog.getText(
+            self,
+            f"Add {self.trait_name} Trait",
+            "Enter new trait adjective:"
+        )
+        
+        if ok and trait:
+            self._add_trait_with_name(trait)
+    
+    def _add_trait_with_name(self, trait: str) -> None:
+        """Add a trait with the given name, handling duplicates as levels."""
+        existing_count = sum(1 for t in self.traits if t == trait or t.startswith(f"{trait} x"))
+        
+        if existing_count > 0:
+            display_trait = f"{trait} x{existing_count + 1}"
+        else:
+            display_trait = trait
+            
+        self.traits.append(display_trait)
+        self.trait_list_widget.addItem(QListWidgetItem(display_trait))
+        self.traitChanged.emit(self.trait_name, self.traits)
         
     def _setup_ui(self):
         """Set up the user interface components."""
@@ -72,18 +130,12 @@ class LarpTraitWidget(QWidget):
             self.trait_list_widget.addItem(item)
     
     def _add_trait(self):
-        """Add a new trait through user input."""
-        trait, ok = QInputDialog.getText(
-            self,
-            f"Add {self.trait_name} Trait",
-            "Enter new trait adjective:"
-        )
-
-        if ok and trait:
-            # Add to internal list and UI (duplicates allowed for multiple levels)
-            self.traits.append(trait)
-            self.trait_list_widget.addItem(QListWidgetItem(trait))
-            self.traitChanged.emit(self.trait_name, self.traits)
+        """Add a new trait - shows menu if available, otherwise shows input dialog."""
+        if self.available_traits:
+            menu = self._create_add_menu()
+            menu.exec(self.add_btn.mapToGlobal(self.add_btn.rect().bottomLeft()))
+        else:
+            self._add_custom_trait()
     
     def _remove_selected_trait(self):
         """Remove the currently selected trait."""

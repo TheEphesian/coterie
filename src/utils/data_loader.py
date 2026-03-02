@@ -1058,6 +1058,12 @@ def prepare_character_for_ui(character: Any) -> Any:
             _ = character.willpower
             _ = character.blood
 
+        # Force load chronicle relationship if present
+        if hasattr(character, 'chronicle'):
+            _ = character.chronicle
+        if hasattr(character, 'chronicle_id'):
+            _ = character.chronicle_id
+
         # Force load all collection attributes
         if hasattr(character, 'traits'):
             _ = list(character.traits)

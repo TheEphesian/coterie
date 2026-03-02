@@ -1,20 +1,18 @@
-When making a new chronicle. Populated Name / HST / Description. Pressed "Create Chronicle" Got Error: Failed to Create chronicle: 'narrator' is an invalid keyword argument for Chronicle
-When making character, Abilities should not be split into Talents Skills and Knowledges. Adding multiple of the same ability results in error - should be able to add multiple levels of abilities. 
-Adding common Talents - the talents added are actually traits (they're from all three categories and in the wrong place)
-Adding Common Skills - Crafty isn't a thing. "Stealthy" should be "Stealth" and "Technical" isn't a thing. Where are these adjectives pulled from? 
-Knowledges (adding common) - Academics should be Academics. Where are these being pulled from? 
-In all of these, you can't add multiple levels of the same discipline / background etc. 
-The advantages tab should just be disciplines. We should then split out other tabs - Backgrounds / Merits / Flaws / Status / Virtues. Vampire sheet is missing blood / willpower and should also have Sire. Check the grapevine sheets for what fields are missing in which character types - this test is only vampire. 
+When adding traits, should be a menu of available options or the ability to add custom traits. Traits are found in laws of the night. 
+When adding multiple levels, levels currently show separately. If i add two levels of the melee ability, it should show as Melee x2. 
+Abilities should be in some sort of menu i can add from a list of pre-populated items or the ability to add custom. 
+no space for negative traits (reference Laws of the night text for negative traits) 
+Merits should not say "enter trait name" when entering. This should have a "Merit" and "Point cost" - these point costs are single cost when purchased at character creation and double cost when purchased afterwards. Allow the user to manually adjust the point cost. There is a document of all powers / abilities / merits / etc in json format that have been pulled from Laws of the night. This should be incorporated. 
 
-When pressing OK on character creation "Viewing Character Characters is not yet implemented"
+going through new character, when you are done and press next you get this error: Error loading character: Parent instance <Vampire at 0x76f5ba8696d0> is not bound to a Session; lazy load operation of attribute 'chronicle' cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
 
-in top menu, selecting STAFF MANAGER exits the program. 
-Failed to create chronicle: 'narrator' is an invalid keyword argument for Chronicle
-Error preparing character for UI: Object '<Character at 0x749c7825b0e0>' is already attached to session '4' (this is '5')
+This brings you to the main ui in that character sheet's tab. Clicking save from here exits the program. ╰─❯ python3 run_ui.py
 Traceback (most recent call last):
-  File /mnt/d/TheEdge/KingmakerTM/Coterie/src/ui/main_window.py, line 900, in _show_staff_manager
-    from src.ui.dialogs.staff_manager import StaffManagerDialog
-  File /mnt/d/TheEdge/KingmakerTM/Coterie/src/ui/dialogs/staff_manager.py, line 11, in <module>
-    from ...models.chronicle import Chronicle
-ModuleNotFoundError: No module named 'src.models'
+  File "/mnt/d/TheEdge/KingmakerTM/Coterie/src/ui/main_window.py", line 533, in _open_character
+    if character.id in self.open_character_sheets:
+       ^^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'id'
 Aborted (core dumped)
+
+
+Chronicles on first page should have be in card format. List chronicle name and HST. Use a bigger font and make them easier to see. Characters should also be bound to chronicles. When double clicking on a chronicle, bring up the character listing for that chronicle. 

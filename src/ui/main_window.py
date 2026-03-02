@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QTabWidget, QMenuBar, QStatusBar, QToolBar,
     QPushButton, QLabel, QMessageBox, QApplication, QSizePolicy,
-    QListWidget, QListWidgetItem
+    QListWidget, QListWidgetItem, QScrollArea, QGroupBox
 )
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
@@ -261,15 +261,22 @@ class MainWindow(QMainWindow):
         heading_label.setStyleSheet("font-size: 16pt; font-weight: bold;")
         self.chronicle_layout.addWidget(heading_label)
         
-        # Create a list widget for chronicles
-        self.chronicle_list = QListWidget()
-        self.chronicle_list.setMinimumHeight(200)
-        self.chronicle_list.itemDoubleClicked.connect(self._set_active_chronicle)
-        self.chronicle_layout.addWidget(self.chronicle_list)
+        # Scroll area for chronicle cards
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setMinimumHeight(300)
+        
+        # Container for chronicle cards
+        self.chronicle_cards_container = QWidget()
+        self.chronicle_cards_layout = QVBoxLayout(self.chronicle_cards_container)
+        scroll.setWidget(self.chronicle_cards_container)
+        
+        self.chronicle_layout.addWidget(scroll)
         
         # Add placeholder for chronicle list when empty
-        self.chronicles_placeholder = QLabel("No Chronicles Found")
-        self.chronicles_placeholder.setStyleSheet("color: gray; margin-top: 20px;")
+        self.chronicles_placeholder = QLabel("No Chronicles Found\nClick 'Create New Chronicle' to get started.")
+        self.chronicles_placeholder.setStyleSheet("color: gray; font-size: 14pt; margin-top: 20px;")
+        self.chronicles_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.chronicles_placeholder.setVisible(False)
         self.chronicle_layout.addWidget(self.chronicles_placeholder)
         
@@ -290,30 +297,31 @@ class MainWindow(QMainWindow):
                 # Fetch all chronicles
                 chronicles = session.query(Chronicle).all()
                 
-                # Clear the list
-                self.chronicle_list.clear()
+                # Clear existing cards
+                while self.chronicle_cards_layout.count():
+                    child = self.chronicle_cards_layout.takeAt(0)
+                    if child.widget():
+                        child.widget().deleteLater()
                 
-                # Add chronicles to the list
+                # Add chronicle cards
                 for chronicle in chronicles:
-                    narrator_display = chronicle.narrator or "No HST"
-                    item = QListWidgetItem(f"{chronicle.name} (HST: {narrator_display})")
-                    item.setData(Qt.ItemDataRole.UserRole, chronicle.id)
+                    # Get character count for this chronicle
+                    character_count = session.query(Character).filter(
+                        Character.chronicle_id == chronicle.id
+                    ).count()
                     
-                    # Make active chronicle bold
-                    if self.active_chronicle and self.active_chronicle.id == chronicle.id:
-                        font = item.font()
-                        font.setBold(True)
-                        item.setFont(font)
-                        
-                    self.chronicle_list.addItem(item)
+                    # Create card widget
+                    card = self._create_chronicle_card(chronicle, character_count)
+                    self.chronicle_cards_layout.addWidget(card)
+                
+                # Add stretch at the end
+                self.chronicle_cards_layout.addStretch()
                 
                 # Show placeholder if no chronicles
                 if not chronicles:
                     self.chronicles_placeholder.setVisible(True)
-                    self.chronicle_list.setVisible(False)
                 else:
                     self.chronicles_placeholder.setVisible(False)
-                    self.chronicle_list.setVisible(True)
                     
                 self.status_bar.showMessage(f"Loaded {len(chronicles)} chronicles")
             finally:
@@ -322,6 +330,67 @@ class MainWindow(QMainWindow):
             error_msg = f"Failed to load chronicles: {str(e)}"
             logger.error(error_msg)
             QMessageBox.critical(self, "Error", error_msg)
+    
+    def _create_chronicle_card(self, chronicle, character_count: int) -> QWidget:
+        """Create a card widget for a chronicle.
+        
+        Args:
+            chronicle: Chronicle to display
+            character_count: Number of characters in the chronicle
+            
+        Returns:
+            QWidget containing the chronicle card
+        """
+        card = QGroupBox()
+        card.setStyleSheet("""
+            QGroupBox {
+                font-size: 14pt;
+                font-weight: bold;
+                border: 2px solid #555;
+                border-radius: 8px;
+                margin-top: 10px;
+                padding-top: 10px;
+                background-color: #f5f5f5;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px;
+            }
+        """)
+        
+        layout = QVBoxLayout(card)
+        
+        # Chronicle name
+        name_label = QLabel(chronicle.name)
+        name_label.setStyleSheet("font-size: 16pt; font-weight: bold; color: #333;")
+        layout.addWidget(name_label)
+        
+        # HST (Storyteller)
+        hst_text = chronicle.narrator or "No HST assigned"
+        hst_label = QLabel(f"HST: {hst_text}")
+        hst_label.setStyleSheet("font-size: 12pt; color: #666;")
+        layout.addWidget(hst_label)
+        
+        # Character count
+        char_label = QLabel(f"Characters: {character_count}")
+        char_label.setStyleSheet("font-size: 12pt; color: #666;")
+        layout.addWidget(char_label)
+        
+        # Make the card clickable
+        card.setCursor(Qt.CursorShape.PointingHandCursor)
+        card.mousePressEvent = lambda event: self._on_chronicle_card_clicked(chronicle)
+        
+        return card
+    
+    def _on_chronicle_card_clicked(self, chronicle) -> None:
+        """Handle click on a chronicle card.
+        
+        Args:
+            chronicle: The clicked chronicle
+        """
+        # Set as active chronicle and show characters for this chronicle
+        self._set_active_chronicle_from_chronicle(chronicle)
         
     def _on_new_chronicle(self) -> None:
         """Show the dialog for creating a new chronicle."""
@@ -413,6 +482,31 @@ class MainWindow(QMainWindow):
         finally:
             if session:
                 session.close()
+    
+    def _set_active_chronicle_from_chronicle(self, chronicle: Chronicle) -> None:
+        """Set the active chronicle from a Chronicle object.
+        
+        Args:
+            chronicle: The Chronicle to set as active
+        """
+        # Set as active chronicle
+        self.active_chronicle = chronicle
+        
+        # Update window title
+        self._update_window_title()
+        
+        # Refresh the chronicle list to update display
+        self._refresh_chronicles()
+        
+        # Switch to characters tab to show characters in this chronicle
+        self.tabs.setCurrentIndex(1)  # Characters tab
+        
+        # Refresh characters to show only those in this chronicle
+        self._refresh_characters()
+        
+        # Show success message
+        self.status_bar.showMessage(f"Active chronicle: {chronicle.name}")
+        logger.info(f"Set active chronicle: {chronicle.name}")
     
     def _create_plots_widget(self) -> None:
         """Create the Plots tab widget."""
@@ -522,27 +616,30 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage(message)
             logger.info(message)
             
-    def _open_character(self, character: Character, use_existing_object: bool = False) -> None:
+    def _open_character(self, character: Any, use_existing_object: bool = False) -> None:
         """Open a character sheet in a new tab.
         
         Args:
-            character: Character to open
+            character: Character to open (can be Character object or character ID)
             use_existing_object: Whether to use the existing character object
         """
+        # Handle both int (character ID) and Character object
+        character_id = character if isinstance(character, int) else character.id
+        
         # Check if character is already open
-        if character.id in self.open_character_sheets:
+        if character_id in self.open_character_sheets:
             # Switch to the existing tab
-            self.tabs.setCurrentIndex(self.open_character_sheets[character.id])
+            self.tabs.setCurrentIndex(self.open_character_sheets[character_id])
             return
             
         try:
             # Use the character object directly if specified, otherwise load from DB
             if not use_existing_object:
                 # Use DataLoader to safely load character with proper session handling
-                character = load_character(character.id)
+                character = load_character(character_id)
                 
                 if not character:
-                    raise ValueError(f"Character with ID {character.id} not found")
+                    raise ValueError(f"Character with ID {character_id} not found")
             
             # Create appropriate sheet based on character type
             if isinstance(character, Vampire):

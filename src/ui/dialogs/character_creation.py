@@ -4,6 +4,8 @@ This module implements the character creation interface, allowing users to creat
 new characters of various World of Darkness types with LARP trait support.
 """
 
+import json
+import os
 from typing import Optional, Dict, Any, List
 from PyQt6.QtWidgets import (
     QDialog, QWidget, QVBoxLayout, QHBoxLayout, 
@@ -16,6 +18,20 @@ from PyQt6.QtCore import Qt, pyqtSignal
 
 from src.utils.trait_converter import TraitConverter
 from src.ui.widgets.larp_trait_widget import LarpTraitWidget, LarpTraitCategoryWidget
+from src.ui.widgets.merit_widget import MeritWidget
+
+
+def load_trait_adjectives() -> Dict[str, Any]:
+    """Load trait adjectives from the data file."""
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data')
+    adjectives_file = os.path.join(data_dir, 'trait_adjectives.json')
+    
+    try:
+        with open(adjectives_file, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading trait adjectives: {e}")
+        return {}
 
 class CharacterCreationDialog(QDialog):
     """Dialog for creating new World of Darkness characters with LARP trait support."""
@@ -197,6 +213,9 @@ class CharacterCreationDialog(QDialog):
         Args:
             parent_layout: Parent layout to add to
         """
+        # Load trait adjectives from data file
+        trait_adjectives = load_trait_adjectives()
+        
         # Attributes section
         attributes_group = QGroupBox("Attributes")
         attributes_layout = QVBoxLayout(attributes_group)
@@ -222,7 +241,50 @@ class CharacterCreationDialog(QDialog):
             category_name="Attributes",
             trait_categories=initial_attributes
         )
+        
+        # Set available traits for each attribute category
+        if "physical" in trait_adjectives:
+            self.attributes.trait_widgets.get("Physical", None).set_available_traits(trait_adjectives["physical"])
+        if "social" in trait_adjectives:
+            self.attributes.trait_widgets.get("Social", None).set_available_traits(trait_adjectives["social"])
+        if "mental" in trait_adjectives:
+            self.attributes.trait_widgets.get("Mental", None).set_available_traits(trait_adjectives["mental"])
+            
         attributes_layout.addWidget(self.attributes)
+        
+        # Negative Traits section
+        neg_traits_group = QGroupBox("Negative Traits")
+        neg_traits_layout = QVBoxLayout(neg_traits_group)
+        parent_layout.addWidget(neg_traits_group)
+        
+        neg_instr = QLabel(
+            "Negative traits represent weaknesses. Each negative trait grants additional Free Traits. "
+            "A character may have up to 7 Negative Traits."
+        )
+        neg_instr.setWordWrap(True)
+        neg_traits_layout.addWidget(neg_instr)
+        
+        initial_negative = {
+            "Negative Physical": [],
+            "Negative Social": [],
+            "Negative Mental": []
+        }
+        
+        self.negative_traits = LarpTraitCategoryWidget(
+            category_name="Negative Traits",
+            trait_categories=initial_negative
+        )
+        
+        if "negative" in trait_adjectives:
+            neg_data = trait_adjectives["negative"]
+            if "physical" in neg_data:
+                self.negative_traits.trait_widgets.get("Negative Physical", None).set_available_traits(neg_data["physical"])
+            if "social" in neg_data:
+                self.negative_traits.trait_widgets.get("Negative Social", None).set_available_traits(neg_data["social"])
+            if "mental" in neg_data:
+                self.negative_traits.trait_widgets.get("Negative Mental", None).set_available_traits(neg_data["mental"])
+                
+        neg_traits_layout.addWidget(self.negative_traits)
         
         # Abilities section
         abilities_group = QGroupBox("Abilities")
@@ -236,8 +298,19 @@ class CharacterCreationDialog(QDialog):
         abilities_instr.setWordWrap(True)
         abilities_layout.addWidget(abilities_instr)
 
-        # Single flat list for all abilities (MET doesn't split into Talents/Skills/Knowledges)
+        # Single flat list for all abilities (MET doesn't split into Talents/Skills/Knowledge)
         self.abilities = LarpTraitWidget("Abilities")
+        
+        # Set available abilities from the data file
+        all_abilities = []
+        if "talents" in trait_adjectives:
+            all_abilities.extend(trait_adjectives["talents"].keys())
+        if "skills" in trait_adjectives:
+            all_abilities.extend(trait_adjectives["skills"].keys())
+        if "knowledges" in trait_adjectives:
+            all_abilities.extend(trait_adjectives["knowledges"].keys())
+        self.abilities.set_available_traits(sorted(all_abilities))
+        
         abilities_layout.addWidget(self.abilities)
 
         # Single button for common abilities
@@ -327,7 +400,13 @@ class CharacterCreationDialog(QDialog):
         merits_instr.setWordWrap(True)
         merits_layout.addWidget(merits_instr)
 
-        self.merits = LarpTraitWidget("Merits")
+        self.merits = MeritWidget("Merits")
+        
+        # Load merits from the powers data file
+        powers_data = self._load_powers_data()
+        if "merits" in powers_data:
+            self.merits.set_available_merits(powers_data["merits"])
+            
         merits_layout.addWidget(self.merits)
 
         flaws_group = QGroupBox("Flaws")
@@ -342,7 +421,33 @@ class CharacterCreationDialog(QDialog):
         flaws_layout.addWidget(flaws_instr)
 
         self.flaws = LarpTraitWidget("Flaws")
+        
+        # Load flaws from the powers data file
+        if "flaws" in powers_data:
+            # Flatten the flaws dictionary into a single list
+            all_flaws = []
+            for category, flaw_list in powers_data["flaws"].items():
+                for flaw in flaw_list:
+                    all_flaws.append(flaw.get('name', ''))
+            self.flaws.set_available_traits(all_flaws)
+            
         flaws_layout.addWidget(self.flaws)
+
+    def _load_powers_data(self) -> Dict[str, Any]:
+        """Load powers data from the JSON file.
+        
+        Returns:
+            Dictionary containing powers data (merits, flaws, etc.)
+        """
+        data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'powers')
+        powers_file = os.path.join(data_dir, 'laws_of_the_night_revised.json')
+        
+        try:
+            with open(powers_file, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading powers data: {e}")
+            return {}
 
     def _suggest_clan_disciplines(self) -> None:
         """Suggest disciplines based on clan selection."""
@@ -438,7 +543,7 @@ class CharacterCreationDialog(QDialog):
         # Add disciplines and backgrounds
         larp_traits["disciplines"] = self.disciplines.get_traits()
         larp_traits["backgrounds"] = self.backgrounds.get_traits()
-        larp_traits["merits"] = self.merits.get_traits()
+        larp_traits["merits"] = self.merits.get_merits()
         larp_traits["flaws"] = self.flaws.get_traits()
         
         # Add to data
