@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QTabWidget, QMenuBar, QStatusBar, QToolBar,
     QPushButton, QLabel, QMessageBox, QApplication, QSizePolicy,
-    QListWidget, QListWidgetItem, QScrollArea, QGroupBox
+    QListWidget, QListWidgetItem, QScrollArea, QGroupBox, QFileDialog
 )
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
@@ -25,6 +25,7 @@ from .dialogs.data_manager_dialog import DataManagerDialog
 from .widgets.character_list_widget import CharacterListWidget
 from .widgets.plots_widget import PlotsWidget
 from .widgets.rumors_widget import RumorsWidget
+from .widgets.chronicle_detail_widget import ChronicleDetailWidget
 from .sheets.vampire_sheet import VampireSheet
 from src.utils.data_loader import (
     load_data, get_category, get_descriptions,
@@ -59,6 +60,9 @@ class MainWindow(QMainWindow):
         
         # Character sheet references
         self.open_character_sheets = {}  # id -> tab index
+        
+        # Chronicle detail tab references
+        self.open_chronicle_tabs = {}  # chronicle_id -> tab index
         
         # Active chronicle
         self.active_chronicle = None
@@ -106,6 +110,10 @@ class MainWindow(QMainWindow):
         
         self.new_char_action = QAction("&New Character", self)
         file_menu.addAction(self.new_char_action)
+        
+        self.import_grapevine_action = QAction("&Import from Grapevine...", self)
+        self.import_grapevine_action.triggered.connect(self._import_grapevine)
+        file_menu.addAction(self.import_grapevine_action)
         
         file_menu.addSeparator()
         
@@ -386,11 +394,34 @@ class MainWindow(QMainWindow):
     def _on_chronicle_card_clicked(self, chronicle) -> None:
         """Handle click on a chronicle card.
         
+        Opens a ChronicleDetailWidget in a new tab (or focuses an
+        existing one if this chronicle is already open).
+        
         Args:
             chronicle: The clicked chronicle
         """
-        # Set as active chronicle and show characters for this chronicle
-        self._set_active_chronicle_from_chronicle(chronicle)
+        # If already open, just focus that tab
+        if chronicle.id in self.open_chronicle_tabs:
+            idx = self.open_chronicle_tabs[chronicle.id]
+            if idx < self.tabs.count():
+                self.tabs.setCurrentIndex(idx)
+                return
+            else:
+                # Stale reference -- clean up and re-open
+                del self.open_chronicle_tabs[chronicle.id]
+
+        # Set as active chronicle
+        self.active_chronicle = chronicle
+        self._update_window_title()
+
+        # Create detail widget and open as a new tab
+        detail = ChronicleDetailWidget(chronicle, parent=self)
+        idx = self.tabs.addTab(detail, chronicle.name)
+        self.open_chronicle_tabs[chronicle.id] = idx
+        self.tabs.setCurrentIndex(idx)
+
+        self.status_bar.showMessage(f"Opened chronicle: {chronicle.name}")
+        logger.info(f"Opened chronicle detail tab: {chronicle.name}")
         
     def _on_new_chronicle(self) -> None:
         """Show the dialog for creating a new chronicle."""
@@ -443,71 +474,6 @@ class MainWindow(QMainWindow):
         finally:
             session.close()
             
-    def _set_active_chronicle(self, item: QListWidgetItem) -> None:
-        """Set the active chronicle.
-        
-        Args:
-            item: The QListWidgetItem for the chronicle
-        """
-        chronicle_id = item.data(Qt.ItemDataRole.UserRole)
-        
-        try:
-            session = get_session()
-            
-            # Fetch the chronicle
-            chronicle = session.query(Chronicle).filter_by(id=chronicle_id).first()
-            
-            if not chronicle:
-                QMessageBox.warning(self, "Warning", "Chronicle not found.")
-                return
-                
-            # Set as active chronicle
-            self.active_chronicle = chronicle
-            
-            # Update window title
-            self._update_window_title()
-            
-            # Refresh the chronicle list to update display
-            session.close()
-            self._refresh_chronicles()
-            
-            # Show success message
-            self.status_bar.showMessage(f"Active chronicle: {chronicle.name}")
-            logger.info(f"Set active chronicle: {chronicle.name}")
-            
-        except Exception as e:
-            error_msg = f"Failed to set active chronicle: {str(e)}"
-            logger.error(error_msg)
-            QMessageBox.critical(self, "Error", error_msg)
-        finally:
-            if session:
-                session.close()
-    
-    def _set_active_chronicle_from_chronicle(self, chronicle: Chronicle) -> None:
-        """Set the active chronicle from a Chronicle object.
-        
-        Args:
-            chronicle: The Chronicle to set as active
-        """
-        # Set as active chronicle
-        self.active_chronicle = chronicle
-        
-        # Update window title
-        self._update_window_title()
-        
-        # Refresh the chronicle list to update display
-        self._refresh_chronicles()
-        
-        # Switch to characters tab to show characters in this chronicle
-        self.tabs.setCurrentIndex(1)  # Characters tab
-        
-        # Refresh characters to show only those in this chronicle
-        self._refresh_characters()
-        
-        # Show success message
-        self.status_bar.showMessage(f"Active chronicle: {chronicle.name}")
-        logger.info(f"Set active chronicle: {chronicle.name}")
-    
     def _create_plots_widget(self) -> None:
         """Create the Plots tab widget."""
         self.plots_widget = PlotsWidget()
@@ -517,12 +483,17 @@ class MainWindow(QMainWindow):
         self.rumors_widget = RumorsWidget()
         
     def _refresh_characters(self) -> None:
-        """Refresh the character list."""
+        """Refresh the character list, filtered to the active chronicle."""
         try:
             session = get_session()
             try:
-                # Use safer query approach with explicit column loading
-                characters = session.query(Character).all()
+                # Filter to active chronicle when one is set
+                query = session.query(Character)
+                if self.active_chronicle:
+                    query = query.filter(
+                        Character.chronicle_id == self.active_chronicle.id
+                    )
+                characters = query.all()
                 
                 # Use detached copies to avoid session issues
                 detached_characters = []
@@ -677,20 +648,27 @@ class MainWindow(QMainWindow):
         Args:
             index: Index of the tab to close
         """
-        # Check if this is a character sheet tab
+        # Remove the closed tab's entry from whichever tracking dict owns it
         for character_id, tab_index in list(self.open_character_sheets.items()):
             if tab_index == index:
-                # Remove reference
                 del self.open_character_sheets[character_id]
-                
-                # Update tab indices for other character sheets
-                for other_id, other_index in list(self.open_character_sheets.items()):
-                    if other_index > index:
-                        self.open_character_sheets[other_id] = other_index - 1
                 break
-                
+
+        for chronicle_id, tab_index in list(self.open_chronicle_tabs.items()):
+            if tab_index == index:
+                del self.open_chronicle_tabs[chronicle_id]
+                break
+
         # Close the tab
         self.tabs.removeTab(index)
+
+        # Decrement all tracked indices above the removed index
+        for cid in list(self.open_character_sheets):
+            if self.open_character_sheets[cid] > index:
+                self.open_character_sheets[cid] -= 1
+        for cid in list(self.open_chronicle_tabs):
+            if self.open_chronicle_tabs[cid] > index:
+                self.open_chronicle_tabs[cid] -= 1
         
     def _delete_character(self, character_id: int) -> None:
         """Delete a character.
@@ -877,6 +855,32 @@ class MainWindow(QMainWindow):
                 trait.categories.append(cat)
                 session.add(trait)
             
+    def _import_grapevine(self) -> None:
+        """Import characters from a Grapevine XML file."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Import from Grapevine",
+            "",
+            "Grapevine Files (*.gv *.gex *.xml);;All Files (*)"
+        )
+        if not file_path:
+            return
+
+        try:
+            result = load_grapevine_file(file_path, self.active_chronicle)
+            count = result.get("imported", 0) if isinstance(result, dict) else 0
+            self._refresh_characters()
+            self._refresh_chronicles()
+            self.status_bar.showMessage(f"Imported {count} character(s) from Grapevine")
+            QMessageBox.information(
+                self, "Import Complete",
+                f"Successfully imported {count} character(s) from:\n{file_path}"
+            )
+        except Exception as e:
+            error_msg = f"Failed to import Grapevine file: {e}"
+            logger.error(error_msg)
+            QMessageBox.critical(self, "Import Error", error_msg)
+
     def _show_data_manager(self) -> None:
         """Show the data manager dialog."""
         dialog = DataManagerDialog(self)
