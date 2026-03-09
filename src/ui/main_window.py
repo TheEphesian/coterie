@@ -532,7 +532,7 @@ class MainWindow(QMainWindow):
                     _ = character.id
                     _ = character.name
                     _ = character.type
-                    _ = character.player
+                    _ = character.player_name
                     _ = character.status
                     detached_characters.append(character)
                 
@@ -557,11 +557,16 @@ class MainWindow(QMainWindow):
         
     def _create_character(self, data: Dict[str, Any]) -> None:
         """Create a new character from the provided data."""
-        with get_session() as session:
-            # Create the character based on type
-            if "vampire" in data["type"].lower():
+        session = None
+        try:
+            session = get_session()
+
+            char_type = data.get("type", "").lower()
+            now = datetime.now()
+
+            if "vampire" in char_type:
                 character = Vampire(
-                    clan=data.get("clan", ""),
+                    clan=data.get("clan", "Caitiff"),
                     generation=data.get("generation", 13),
                     sect=data.get("sect", ""),
                     sire="",
@@ -580,41 +585,49 @@ class MainWindow(QMainWindow):
             else:
                 character = Character()
                 character.type = data["type"].split(":")[0].lower().strip()
-                
-            # Set basic attributes
-            character.name = data["name"]
-            character.player_name = data["player"]  # Updated to use player_name
-            character.nature = data["nature"]
-            character.demeanor = data["demeanor"]
+
+            character.name = data.get("name", "")
+            character.player_name = data.get("player", data.get("player_name", ""))
+            character.nature = data.get("nature", "")
+            character.demeanor = data.get("demeanor", "")
             character.status = "Active"
-            character.start_date = datetime.now()
-            character.last_modified = datetime.now()
-            
-            # Set chronicle if one is active
+            character.start_date = now
+            character.last_modified = now
+
             if self.active_chronicle:
                 character.chronicle_id = self.active_chronicle.id
 
-            # Add to database and commit
             session.add(character)
             session.commit()
-            
-            # Prepare the character for UI by preloading all attributes
-            # This prevents lazy loading issues when the session is closed
-            prepared_character = prepare_character_for_ui(character)
-            
+
+            character_id = character.id
+            session.close()
+            session = None
+
             # Refresh character list
             self._refresh_characters()
-            
-            # Open the new character using the prepared object
-            self._open_character(prepared_character, use_existing_object=True)
-            
-            # Create status message
-            message = f"Created new character: {data['name']}"
+
+            # Load freshly from DB and open
+            loaded = load_character(character_id)
+            if loaded:
+                self._open_character(loaded, use_existing_object=True)
+
+            message = f"Created new character: {data.get('name', '')}"
             if self.active_chronicle:
                 message += f" in chronicle {self.active_chronicle.name}"
-                
+
             self.status_bar.showMessage(message)
             logger.info(message)
+
+        except Exception as e:
+            error_msg = f"Failed to create character: {str(e)}"
+            logger.error(error_msg)
+            QMessageBox.critical(self, "Error", error_msg)
+            if session:
+                session.rollback()
+        finally:
+            if session:
+                session.close()
             
     def _open_character(self, character: Any, use_existing_object: bool = False) -> None:
         """Open a character sheet in a new tab.
@@ -1016,15 +1029,27 @@ class MainWindow(QMainWindow):
     def _show_staff_manager(self) -> None:
         """Show the staff manager dialog."""
         from src.ui.dialogs.staff_manager import StaffManagerDialog
-        with get_session() as session:
+        session = get_session()
+        try:
             dialog = StaffManagerDialog(session, self.active_chronicle, self)
             dialog.exec()
-            self._refresh_characters()  # Refresh in case staff assignments changed
-            
+            self._refresh_characters()
+        except Exception as e:
+            logger.error(f"Staff manager error: {e}")
+            QMessageBox.critical(self, "Error", str(e))
+        finally:
+            session.close()
+
     def _show_player_manager(self) -> None:
         """Show the player manager dialog."""
         from src.ui.dialogs.player_manager import PlayerManagerDialog
-        with get_session() as session:
+        session = get_session()
+        try:
             dialog = PlayerManagerDialog(session, self.active_chronicle, self)
             dialog.exec()
-            self._refresh_characters()  # Refresh in case player assignments changed 
+            self._refresh_characters()
+        except Exception as e:
+            logger.error(f"Player manager error: {e}")
+            QMessageBox.critical(self, "Error", str(e))
+        finally:
+            session.close() 
